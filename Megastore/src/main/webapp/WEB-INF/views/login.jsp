@@ -51,10 +51,12 @@ body {
 				<strong>登录系统</strong>
 			</legend>
 			<!-- 登陆表单 -->
-			<label for="username">用户名 </label> <input type="text" name="username"
-				id="username" class="inputText" style="margin-bottom: 15px;" /> <label
-				for="password" style="margin-top: 5px;">密&nbsp;&nbsp;码 </label> <input
-				type="password" name="password" id="password" class="inputText" />
+			<label for="username">用户名 </label> <input type="text"
+				name="j_username" id="username" class="inputText"
+				value="${sessionScope['SPRING_SECURITY_LAST_USERNAME']}"
+				style="margin-bottom: 15px;" /> <label for="password"
+				style="margin-top: 5px;">密&nbsp;&nbsp;码 </label> <input
+				type="password" name="j_password" id="password" class="inputText" />
 			<input type="checkbox" name="_spring_security_remember_me" />自动登录<br />
 			<input type="submit" value="登录" class="inputSubmit" />
 			<!-- 登陆验证信息 -->
