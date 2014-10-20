@@ -24,7 +24,9 @@
 		<form-login login-page="/login.html" login-processing-url="/login"
 			username-parameter="username" password-parameter="password"
 			default-target-url="/index" always-use-default-target="true"
-			authentication-failure-url="/login.html?error" />
+			authentication-failure-url="/login.html?error"
+			authentication-success-handler-ref="successHandler"
+			authentication-failure-handler-ref="failureHandler"/>
 		<!-- 登出管理 -->
 		<logout logout-url="/logout" logout-success-url="/login.html?logout"
 			delete-cookies="JSESSIONID" invalidate-session="true" />
@@ -47,6 +49,12 @@
 		<csrf />
 
 	</http>
+	
+	<beans:bean id ="failureHandler" class="com.walemao.megastore.domain.rel.LoginAuthenticationFailureHandler">
+	</beans:bean>
+	
+	<beans:bean id = "successHandler" class = "com.walemao.megastore.domain.rel.LoginAuthenticationSuccessHandler">
+	</beans:bean>
 
 	<!-- 盐 -->
 	<beans:bean id="saltSource"
