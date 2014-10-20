@@ -1,0 +1,93 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/security
+								http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 方法保护 -->
+	<global-method-security secured-annotations="enabled"
+		jsr250-annotations="disabled" pre-post-annotations="enabled" />
+
+	<!-- 不需要Security保护的资源 -->
+	<http pattern="/resources/**" security="none" />
+
+
+	<!-- 需要Security保护的资源 -->
+	<http auto-config="true">
+
+		<intercept-url pattern="/login.**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/user/**" access="ROLE_USER" />
+		
+		<remember-me data-source-ref="dataSource"
+			token-validity-seconds="1209600" remember-me-parameter="_spring_security_remember_me" />
+		<form-login login-page="/login.html" login-processing-url="/login"
+			username-parameter="username" password-parameter="password"
+			default-target-url="/index" always-use-default-target="true"
+			authentication-failure-url="/login.html?error" />
+		<!-- 登出管理 -->
+		<logout logout-url="/logout" logout-success-url="/login.html?logout"
+			delete-cookies="JSESSIONID" invalidate-session="true" />
+
+		<!-- Header管理 -->
+		<headers>
+			<cache-control /> <!-- XSS -->
+			<content-type-options />
+			<frame-options />
+			<xss-protection />
+		</headers>
+
+		<!-- Session策略 -->
+		<session-management session-fixation-protection="migrateSession">
+			<concurrency-control max-sessions="1"
+				error-if-maximum-exceeded="false" expired-url="/login.html" />
+		</session-management>
+
+		<!-- Token策略 -->
+		<csrf />
+
+	</http>
+
+	<!-- 盐 -->
+	<beans:bean id="saltSource"
+		class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+		<beans:property name="userPropertyToUse" value="salt"></beans:property>
+	</beans:bean>
+
+	<!-- md5加密方式 -->
+	<beans:bean id="md5"
+		class="org.springframework.security.authentication.encoding.Md5PasswordEncoder">
+	</beans:bean>
+
+	<beans:bean id="userAttemptsDao"
+		class="com.walemao.megastore.repository.impl.UserAttemptsDaoImpl">
+		<beans:property name="jdbcTemplate" ref="jdbcTemplate" />
+	</beans:bean>
+
+	<beans:bean id="userDetailsService"
+		class="com.walemao.megastore.repository.impl.UsernameJdbcDaoImpl">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="usersByUsernameQuery"
+			value="select u_username as username, u_password as password, u_enabled as enabled, u_salt ,u_accountnonexpired,u_accountnonlocked,u_credentialsnonexpired as salt from t_user where u_username = ?" />
+		<beans:property name="authoritiesByUsernameQuery"
+			value="select username, authority from t_user_authority where username = ?" />
+	</beans:bean>
+
+	<beans:bean id="usernameAuthenticatonProvider"
+		class="com.walemao.megastore.domain.rel.UsernameAuthenticatonProvider">
+		<beans:property name="userDetailsService" ref="userDetailsService"></beans:property>
+		<beans:property name="passwordEncoder" ref="md5"></beans:property>
+		<beans:property name="saltSource" ref="saltSource"></beans:property>
+		<beans:property name="userAttemptsDao" ref="userAttemptsDao"></beans:property>
+	</beans:bean>
+
+	<!-- ======================== AUTHENTICATION ======================= -->
+	<beans:bean id="org.springframework.security.authenticationManager"
+		class="org.springframework.security.authentication.ProviderManager">
+		<beans:property name="providers">
+			<beans:list>
+				<beans:ref local="usernameAuthenticatonProvider" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+</beans:beans>
