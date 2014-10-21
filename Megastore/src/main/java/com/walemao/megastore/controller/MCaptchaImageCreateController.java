@@ -70,17 +70,6 @@ public class MCaptchaImageCreateController {
     }  
 	
 	
-	/** 
-     * loginCheck:ajax异步校验登录请求. <br/> 
-     * 
-     * @author chenzhou1025@126.com 
-     * @param request 
-     * @param username 用户名 
-     * @param password 密码 
-     * @param kaptchaReceived 验证码 
-     * @return 校验结果 
-     * @since 2013-12-10 
-     */  
     @RequestMapping(value = "check", method = RequestMethod.POST)  
     @ResponseBody  
     public String loginCheck(HttpServletRequest request,  
@@ -88,18 +77,15 @@ public class MCaptchaImageCreateController {
             @RequestParam(value = "password", required = true) String password, */ 
             @RequestParam(value = "kaptcha", required = true) String kaptchaReceived)
     {  
-        //用户输入的验证码的值  
+       
         String kaptchaExpected = (String) request.getSession().getAttribute(  
                 com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);  
-        //校验验证码是否正确 
+        
         if (kaptchaReceived == null || !kaptchaReceived.equals(kaptchaExpected)) 
         {  
-            return "kaptcha_error";//返回验证码错误  
+            return "kaptcha_error";
         }
         
-        //校验用户名密码  
-        // ……  
-        // ……  
-        return "success"; //校验通过返回成功  
+        return "success";
     }  
 }

@@ -53,7 +53,7 @@ body {
 			<!-- 登陆表单 -->
 			<label for="username">用户名 </label> <input type="text"
 				name="j_username" id="username" class="inputText"
-				value="${sessionScope['SPRING_SECURITY_LAST_USERNAME']}"
+				value="${username}"
 				style="margin-bottom: 15px;" /> <label for="password"
 				style="margin-top: 5px;">密&nbsp;&nbsp;码 </label> <input
 				type="password" name="j_password" id="password" class="inputText" />
