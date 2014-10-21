@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.domain.UserAuthority;
-import com.walemao.megastore.domain.rel.UsernameAuthenticatonProvider;
 import com.walemao.megastore.repository.UserAttemptsDao;
 import com.walemao.megastore.repository.UserAuthorityDao;
 import com.walemao.megastore.repository.UserDao;
+import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
 import com.walemao.megastore.service.MUserAuthorityService;
 
 @Service
