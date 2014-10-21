@@ -1,6 +1,8 @@
 package com.walemao.megastore.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +36,7 @@ public class MAuthenticationController {
 
 	@Autowired
 	private MRegisterValidator usernameValidator;
-	
+
 	@Autowired
 	private MEmailService emailService;
 
@@ -58,29 +61,36 @@ public class MAuthenticationController {
 	}
 
 	@RequestMapping(value = "/login.html", method = RequestMethod.GET)
-	public String getLoginPage(HttpServletRequest request) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null) {
-		    Object principal = auth.getPrincipal();  
-		    if (principal instanceof UserDetails) {
-		        UserDetails user = (UserDetails) principal;
-		       request.setAttribute("username", user.getUsername());
-		    }
-		}
+	public String getLoginPage(
+			@CookieValue(value = "foo", required = false) String fooCookie,
+			HttpServletRequest request) {
+
+		request.setAttribute("username", fooCookie);
 		return "login";
 	}
 
 	@RequestMapping(value = "index", method = RequestMethod.GET)
-	public String getIndexPage(HttpServletRequest request) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	public String getIndexPage(
+			@CookieValue(value = "foo", required = false) String fooCookie,
+			HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+
 		if (auth != null) {
-		    Object principal = auth.getPrincipal();  
-		    if (principal instanceof UserDetails) {
-		        UserDetails user = (UserDetails) principal;
-		       request.setAttribute("username", user.getUsername());
-		    }
+			Object principal = auth.getPrincipal();
+			if (principal instanceof UserDetails) {
+				UserDetails user = (UserDetails) principal;
+				Cookie foo = new Cookie("foo", user.getUsername());
+				foo.setMaxAge(1209600);
+				response.addCookie(foo);
+				request.setAttribute("islogin", 1);
+				request.setAttribute("username", user.getUsername());
+				return "index";
+			}
 		}
-		return "index";
+		
+		request.setAttribute("username", fooCookie);
+		return "index";	
 	}
 
 	@RequestMapping(value = "modify_pwd", method = RequestMethod.GET)
@@ -111,14 +121,12 @@ public class MAuthenticationController {
 	public String getFindPasswordVerificationPage() {
 		return "find_pwd_verification";
 	}
-	
+
 	@RequestMapping(value = "verification", method = RequestMethod.POST)
-	public String sendVericationCode(String emailAddress)
-	{
+	public String sendVericationCode(String emailAddress) {
 		emailService.sendVericationCode("username", emailAddress);
 		return "";
 	}
-	
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {

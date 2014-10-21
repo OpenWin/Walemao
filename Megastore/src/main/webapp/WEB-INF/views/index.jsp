@@ -9,7 +9,14 @@
 </head>
 <body>
 <div>
-  您好，${username}  欢迎来到哇乐猫商城，<a href="<c:url value="/login.html" />">请登录!</a>
+  <c:if test="${islogin ne 1}">
+     您好，<c:out value="${username}"/> 欢迎来到哇乐猫商城！ <a href="<c:url value="/login.html" />">请登录!</a>
+  </c:if>
+  
+  <c:if test="${islogin == 1}">
+     您好，<c:out value="${username}"/> 欢迎来到哇乐猫商城！已登录！
+  </c:if>
+  
 </div>
 </body>
 </html>
