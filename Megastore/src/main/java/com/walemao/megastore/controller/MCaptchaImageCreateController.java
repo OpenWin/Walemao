@@ -2,6 +2,7 @@ package com.walemao.megastore.controller;
 
 import java.awt.image.BufferedImage;
 
+
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;

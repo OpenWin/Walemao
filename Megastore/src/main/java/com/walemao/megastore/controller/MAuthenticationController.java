@@ -1,6 +1,7 @@
 package com.walemao.megastore.controller;
 
 import javax.servlet.http.Cookie;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,9 +25,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
-import com.walemao.megastore.service.MEmailService;
-import com.walemao.megastore.service.MUserAuthorityService;
+import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
+import com.walemao.megastore.util.BaseUtil;
 
 @Controller
 public class MAuthenticationController{
@@ -34,13 +35,10 @@ public class MAuthenticationController{
 			.getLogger(MAuthenticationController.class);
 
 	@Autowired
-	private MUserAuthorityService userAuthorityService;
+	private MUserService mUserService;
 
 	@Autowired
 	private MRegisterValidator usernameValidator;
-
-	@Autowired
-	private MEmailService emailService;
 
 	// Display the form on the get request
 	@RequestMapping(value = "/reg", method = RequestMethod.GET)
@@ -56,7 +54,7 @@ public class MAuthenticationController{
 			return result.getFieldErrors().toString();
 		}
 
-		if (userAuthorityService.registerUser(user)) {
+		if (mUserService.registerUser(user)) {
 			return "registration success";
 		}
 		return "registration failed";
@@ -111,7 +109,7 @@ public class MAuthenticationController{
 		System.out.println(userDetails.getUsername() + " -modify_pwd ");
 		System.out.println("password:" + password + "\nnew password:"
 				+ newPassword);
-		if (userAuthorityService.changePassword(userDetails.getUsername(),
+		if (mUserService.changePassword(userDetails.getUsername(),
 				password, newPassword)) {
 			System.out.println("Modify password sucessfully.");
 		}
@@ -131,23 +129,32 @@ public class MAuthenticationController{
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		String message = "";
 		try {
-			if (name == null || name.length() <= 0) {
+			if (name == null || name.length() <= 0 || name.equals("用户名/邮箱/已验证手机")) {
 				message = "请填写您的用户名/邮箱/已验证手机";
+				redirectAttributes.addFlashAttribute("nameMsg", message);
+				return "redirect:/findPwd/index";
 			}
-			if (kaptcha == null || name.length() <= 0) {
+			else if (kaptcha == null || kaptcha.length() <= 0) {
 				message = "请输入验证码";
+				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
+				return "redirect:/findPwd/index";
 			} else {
+				String username = name;
+				if(name.contains("@")){
+					//邮箱
+					username = "";
+				}else if(BaseUtil.isMobile(name)){
+					//手机号码
+					username = "";
+				}
+				request.setAttribute("username", username);
 				return "safe/findPwdPage2";
 			}
-			logger.info(message);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		redirectAttributes.addFlashAttribute("status", "danger");
-		redirectAttributes.addFlashAttribute("messageStatus", "Fail！");
-		redirectAttributes.addFlashAttribute("message", message);
-		return "redirect:safe/findPwdPage1";
+		return null;
 	}
 
 	@RequestMapping(value = "findPwd/resetPassword", method = RequestMethod.POST)
@@ -162,7 +169,7 @@ public class MAuthenticationController{
 
 	@RequestMapping(value = "verification", method = RequestMethod.POST)
 	public String sendVericationCode(String emailAddress) {
-		emailService.sendVericationCode("username", emailAddress);
+		mUserService.sendVerificationCode("username", emailAddress);
 		return "";
 	}
 
