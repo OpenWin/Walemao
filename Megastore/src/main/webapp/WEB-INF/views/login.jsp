@@ -57,7 +57,6 @@ body {
 				for="password" style="margin-top: 5px;">密码 </label> <input
 				type="password" name="j_password" id="password" class="inputText" />
 			<br />
-			<br />
 			<!-- 登陆验证信息 -->
 			<c:if test="${param.error != null}">
 				<div class="msg">
