@@ -52,10 +52,10 @@ body {
 			</legend>
 			<!-- 登陆表单 -->
 			<label for="username">邮箱/用户名/已验证手机 </label> <br /> <input
-				type="text" name="j_username" id="username" class="inputText"
+				type="text" name="username" id="username" class="inputText"
 				value="${username}" style="margin-bottom: 15px;" /> <label
 				for="password" style="margin-top: 5px;">密码 </label> <input
-				type="password" name="j_password" id="password" class="inputText" />
+				type="password" name="password" id="password" class="inputText" />
 			<br />
 			<!-- 登陆验证信息 -->
 			<c:if test="${param.error != null}">
