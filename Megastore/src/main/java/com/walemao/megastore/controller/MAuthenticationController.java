@@ -1,7 +1,6 @@
 package com.walemao.megastore.controller;
 
 import javax.servlet.http.Cookie;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,12 +24,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
+import com.walemao.megastore.repository.UserDao;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
 import com.walemao.megastore.util.BaseUtil;
 
 @Controller
-public class MAuthenticationController{
+public class MAuthenticationController {
 	private Logger logger = LoggerFactory
 			.getLogger(MAuthenticationController.class);
 
@@ -109,8 +109,8 @@ public class MAuthenticationController{
 		System.out.println(userDetails.getUsername() + " -modify_pwd ");
 		System.out.println("password:" + password + "\nnew password:"
 				+ newPassword);
-		if (mUserService.changePassword(userDetails.getUsername(),
-				password, newPassword)) {
+		if (mUserService.changePassword(userDetails.getUsername(), password,
+				newPassword)) {
 			System.out.println("Modify password sucessfully.");
 		}
 
@@ -129,23 +129,30 @@ public class MAuthenticationController{
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		String message = "";
 		try {
-			if (name == null || name.length() <= 0 || name.equals("用户名/邮箱/已验证手机")) {
+			if (name == null || name.length() <= 0
+					|| name.equals("用户名/邮箱/已验证手机")) {
 				message = "请填写您的用户名/邮箱/已验证手机";
 				redirectAttributes.addFlashAttribute("nameMsg", message);
 				return "redirect:/findPwd/index";
-			}
-			else if (kaptcha == null || kaptcha.length() <= 0) {
+			} else if (kaptcha == null || kaptcha.length() <= 0) {
 				message = "请输入验证码";
 				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
 				return "redirect:/findPwd/index";
 			} else {
 				String username = name;
-				if(name.contains("@")){
-					//邮箱
-					username = "";
-				}else if(BaseUtil.isMobile(name)){
-					//手机号码
-					username = "";
+				if (BaseUtil.isEmail(name)) {
+					// 邮箱
+					username = mUserService.getUsername(name, 1);
+
+				} else if (BaseUtil.isMobile(name)) {
+					// 手机号码
+					username = mUserService.getUsername(name, 0);
+					;
+				}
+				if (!mUserService.getUsernameExist(username)) {
+					message = "您输入的账户名不存在，请核对后重新输入。";
+					redirectAttributes.addFlashAttribute("nameMsg", message);
+					return "redirect:/findPwd/index";
 				}
 				request.setAttribute("username", username);
 				return "safe/findPwdPage2";

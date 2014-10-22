@@ -51,6 +51,6 @@ body {
 </style>
 </head>
 <body>
-
+<c:out value="${username}"/>
 </body>
 </html>

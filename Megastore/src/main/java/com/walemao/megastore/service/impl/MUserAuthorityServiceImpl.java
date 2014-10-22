@@ -79,7 +79,11 @@ public class MUserAuthorityServiceImpl implements MUserService {
 	@Override
 	public String getUsername(String args, int type) {
 		// TODO Auto-generated method stub
-		return null;
+		if (type == 0) {
+			return userDao.getUserNameByMobilephone(args);
+		} else {
+			return userDao.getUserNameByEmail(args);
+		}
 	}
 
 	@Override
@@ -93,5 +97,11 @@ public class MUserAuthorityServiceImpl implements MUserService {
 		message.setSubject("Verification Code");
 		mailSender.send(message);
 
+	}
+
+	@Override
+	public boolean getUsernameExist(String username) {
+		// TODO Auto-generated method stub
+		return userAttemptsDao.CheckUsername(username);
 	}
 }
