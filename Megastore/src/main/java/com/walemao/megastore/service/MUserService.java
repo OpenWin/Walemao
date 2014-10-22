@@ -14,4 +14,6 @@ public interface MUserService {
 			String newRawPassword);
 
 	public void sendVerificationCode(String usernmae, String emailAddress);
+	
+	public User getUser(String username);
 }
