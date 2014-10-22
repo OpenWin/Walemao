@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.service.MEmailService;
@@ -27,7 +29,7 @@ import com.walemao.megastore.service.MUserAuthorityService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
 
 @Controller
-public class MAuthenticationController {
+public class MAuthenticationController{
 	private Logger logger = LoggerFactory
 			.getLogger(MAuthenticationController.class);
 
@@ -88,9 +90,9 @@ public class MAuthenticationController {
 				return "index";
 			}
 		}
-		
+
 		request.setAttribute("username", fooCookie);
-		return "index";	
+		return "index";
 	}
 
 	@RequestMapping(value = "modify_pwd", method = RequestMethod.GET)
@@ -117,9 +119,45 @@ public class MAuthenticationController {
 		return null;
 	}
 
-	@RequestMapping(value = "forget_pwd", method = RequestMethod.GET)
-	public String getFindPasswordVerificationPage() {
-		return "safe/findPwdPage1.jsp";
+	@RequestMapping(value = "findPwd/index", method = RequestMethod.GET)
+	public String getFindPasswordIndexPage() {
+		return "safe/findPwdPage1";
+	}
+
+	@RequestMapping(value = "findPwd/findPwd", method = RequestMethod.POST)
+	public String getFindPasswordFindPwdPage(
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String kaptcha,
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		String message = "";
+		try {
+			if (name == null || name.length() <= 0) {
+				message = "请填写您的用户名/邮箱/已验证手机";
+			}
+			if (kaptcha == null || name.length() <= 0) {
+				message = "请输入验证码";
+			} else {
+				return "safe/findPwdPage2";
+			}
+			logger.info(message);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		redirectAttributes.addFlashAttribute("status", "danger");
+		redirectAttributes.addFlashAttribute("messageStatus", "Fail！");
+		redirectAttributes.addFlashAttribute("message", message);
+		return "redirect:safe/findPwdPage1";
+	}
+
+	@RequestMapping(value = "findPwd/resetPassword", method = RequestMethod.POST)
+	public String getFindPasswordResetPasswordPage() {
+		return "safe/findPwdPage3";
+	}
+
+	@RequestMapping(value = "findPwd/resetPasswdSuccess", method = RequestMethod.POST)
+	public String getFindPasswordResetPasswdSuccessPage() {
+		return "safe/findPwdPage4";
 	}
 
 	@RequestMapping(value = "verification", method = RequestMethod.POST)

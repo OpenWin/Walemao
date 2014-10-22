@@ -73,7 +73,7 @@ body {
 				<div class="msg">You have been logged out.</div>
 			</c:if>
 			<br /> <input type="checkbox" name="_spring_security_remember_me" />自动登录
-			<a href="forget_pwd">忘记密码？</a><br /> <input type="submit" value="登录"
+			<a href="findPwd/index">忘记密码？</a><br /> <input type="submit" value="登录"
 				class="inputSubmit" /><br /> <input type="button"
 				onclick="location='reg'" value="免费注册" />
 		</fieldset>
