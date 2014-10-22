@@ -51,16 +51,29 @@ body {
 				<strong>登录系统</strong>
 			</legend>
 			<!-- 登陆表单 -->
-			<label for="username">用户名 </label> <input type="text"
+			<label for="username">用户名 </label> 
+			<input type="text"
 				name="j_username" id="username" class="inputText"
 				value="${username}"
-				style="margin-bottom: 15px;" /> <label for="password"
+				style="margin-bottom: 15px;" />
+				
+			 <label for="password"
 				style="margin-top: 5px;">密&nbsp;&nbsp;码 </label> <input
 				type="password" name="j_password" id="password" class="inputText" />
+			
+			<c:if test="">
+				<label for="captcha" style="margin-top: ">验证码</label>
+				<input type="text" name="j_captcha" class="inputText"/>	
+			</c:if>
+				
 			<input type="checkbox" name="_spring_security_remember_me" />自动登录 <a
-				href="forget_pwd">忘记密码？</a><br /> <input type="submit" value="登录"
-				class="inputSubmit" /><br />
-				<input type="button" onclick="location='reg'" value="免费注册" />
+				href="forget_pwd">忘记密码？</a><br />
+				
+			<input type="submit" value="登录" class="inputSubmit" /><br />
+			<input type="button" onclick="location='reg'" value="免费注册" />
+				
+				
+				
 			<!-- 登陆验证信息 -->
 			<c:if test="${param.error != null}">
 				<div class="msg">
