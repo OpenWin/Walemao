@@ -1,17 +1,14 @@
 package com.walemao.megastore.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.domain.UserAuthority;
-import com.walemao.megastore.repository.UserAttemptsDao;
 import com.walemao.megastore.repository.UserAuthorityDao;
 import com.walemao.megastore.repository.UserDao;
+import com.walemao.megastore.security.jdbc.UserAttemptsJdbcDaoImpl;
 import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
 import com.walemao.megastore.service.MUserAuthorityService;
 
@@ -22,7 +19,7 @@ public class MUserAuthorityServiceImpl implements MUserAuthorityService {
 	private UserDao userDao;
 	
 	@Autowired
-	private UserAttemptsDao userAttemptsDao;
+	private UserAttemptsJdbcDaoImpl userAttemptsDao;
 	
 	@Autowired
 	private UserAuthorityDao userAuthorityDao;
