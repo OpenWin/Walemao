@@ -119,7 +119,7 @@ public class MAuthenticationController {
 
 	@RequestMapping(value = "forget_pwd", method = RequestMethod.GET)
 	public String getFindPasswordVerificationPage() {
-		return "find_pwd_verification";
+		return "safe/findPwdPage1.jsp";
 	}
 
 	@RequestMapping(value = "verification", method = RequestMethod.POST)
