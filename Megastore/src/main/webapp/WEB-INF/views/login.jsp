@@ -32,6 +32,13 @@ body {
 }
 
 #loginForm .inputSubmit {
+	float: left;
+	padding: 5px 15px;
+	cursor: pointer;
+	letter-spacing: 5px;
+}
+
+#loginForm .reg {
 	float: right;
 	padding: 5px 15px;
 	cursor: pointer;
@@ -57,25 +64,49 @@ body {
 				for="password" style="margin-top: 5px;">密码 </label> <input
 				type="password" name="password" id="password" class="inputText" />
 			<br />
+			<c:if test="${CREATE_CAPTCHA != null && CREATE_CAPTCHA == 'TRUE'}">
+				<div class="form-group">
+					<label for="admin-password-input" class="col-sm-4 control-label"><span
+						class="glyphicon glyphicon-lock"></span>验证码：</label>
+					<div class="col-sm-8">
+						<div class="input-group">
+							<input type="text" name="j_captcha" class="form-control" /> <span
+								class="input-group-addon"><img id="kaptcha" width="95"
+								height="34" src="<c:url value="/kaptcha.jpg" />" /></span>
+						</div>
+					</div>
+				</div>
+			</c:if>
 			<!-- 登陆验证信息 -->
-			<c:if test="${param.error != null}">
-				<div class="msg">
-					Failed to login.
-					<c:if test="${SPRING_SECURITY_LAST_EXCEPTION != null}">
-              			Reason: <c:out
-							value="${SPRING_SECURITY_LAST_EXCEPTION. 
-              			message}" />
-					</c:if>
+			<!-- 登陆验证信息 -->
+			<c:if test="${LOGIN_ERROR_KEY != null}">
+				<div class="msg" style="color: #db4a39;">
+					<c:if test="${LOGIN_ERROR_KEY == 'PASSWORD_NO_RIGHT'}">
+              	 密码错误！
+				</c:if>
+					<c:if test="${LOGIN_ERROR_KEY == 'USERNAME_NO_FOUND'}">
+              	 用户名不存在！
+				</c:if>
+					<c:if test="${LOGIN_ERROR_KEY == 'USER_LOCKED'}">
+              	 账号已被锁定，请20分钟后重试！
+				</c:if>
 				</div>
 			</c:if>
 
+			<c:if test="${ CAPTCHA_ERROR_KEY != null}">
+				<div class="msg" style="color: #db4a39;">
+					<c:if test="${CAPTCHA_ERROR_KEY == 'CAPTCHA_NO_RIGHT'}">
+              	 验证码错误！
+				</c:if>
+				</div>
+			</c:if>
 			<c:if test="${param.logout != null}">
 				<div class="msg">You have been logged out.</div>
 			</c:if>
 			<br /> <input type="checkbox" name="_spring_security_remember_me" />自动登录
-			<a href="findPwd/index">忘记密码？</a><br /> <input type="submit" value="登录"
-				class="inputSubmit" /><br /> <input type="button"
-				onclick="location='reg'" value="免费注册" />
+			<a href="findPwd/index">忘记密码？</a><br /> <input type="submit"
+				value="登录" class="inputSubmit" /><br /> <input type="button"
+				onclick="location='reg'" class="reg" value="免费注册" />
 		</fieldset>
 	</form:form>
 </body>

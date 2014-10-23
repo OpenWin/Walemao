@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.repository.UserDao;
+import com.walemao.megastore.security.Exception.SecurityAttributes;
+import com.walemao.megastore.security.Exception.SecurityAttributes.LOGIN_ERROR;
 import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
@@ -69,7 +72,13 @@ public class MAuthenticationController {
 	public String getLoginPage(
 			@CookieValue(value = "foo", required = false) String fooCookie,
 			HttpServletRequest request) {
-
+		HttpSession session = request.getSession();
+		LOGIN_ERROR loginError = (LOGIN_ERROR)session.getAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
+		if (loginError != null)
+		{
+			request.setAttribute(SecurityAttributes.LOGIN_ERROR_KEY, loginError);
+			session.removeAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
+		}
 		request.setAttribute("username", fooCookie);
 		return "login";
 	}
@@ -225,7 +234,7 @@ public class MAuthenticationController {
 	/**
 	 * 验证用户名
 	 * @param username
-	 * @return
+	 * @return error页面返回连接
 	 */
 	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
 	public @ResponseBody Map<String,Object> validateUser(String username) {
@@ -234,7 +243,6 @@ public class MAuthenticationController {
 			requstMap.put("status", "success");
 		} else {
 			requstMap.put("status", "error");
-			requstMap.put("message", "用户名已经被注册啦！");
 		}
 		return requstMap;
 	}
