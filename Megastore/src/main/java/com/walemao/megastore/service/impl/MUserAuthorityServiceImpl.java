@@ -100,14 +100,8 @@ public class MUserAuthorityServiceImpl implements MUserService {
 	}
 
 	@Override
-	public boolean getUsernameExist(String username) {
-		// TODO Auto-generated method stub
-		return userAttemptsDao.CheckUsername(username);
-	}
-
-	@Override
 	public User getUser(String username) {
 		// TODO Auto-generated method stub
-		return null;
+		return userDao.getUser(username);
 	}
 }

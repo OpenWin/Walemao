@@ -51,6 +51,10 @@ body {
 </style>
 </head>
 <body>
-<c:out value="${username}"/>
+<c:out value="${user.username}"/>
+<br/>
+<c:out value="${encryptemail}"/>
+<br/>
+<c:out value="${encryptmobilephone}"/>
 </body>
 </html>

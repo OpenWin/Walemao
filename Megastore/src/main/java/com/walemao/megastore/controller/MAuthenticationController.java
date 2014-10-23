@@ -28,6 +28,7 @@ import com.walemao.megastore.repository.UserDao;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
 import com.walemao.megastore.util.BaseUtil;
+import com.walemao.megastore.util.StringMD5;
 
 @Controller
 public class MAuthenticationController {
@@ -149,12 +150,26 @@ public class MAuthenticationController {
 					username = mUserService.getUsername(name, 0);
 					;
 				}
-				if (!mUserService.getUsernameExist(username)) {
+				User user = mUserService.getUser(username);
+				if (user == null) {
 					message = "您输入的账户名不存在，请核对后重新输入。";
 					redirectAttributes.addFlashAttribute("nameMsg", message);
 					return "redirect:/findPwd/index";
 				}
-				request.setAttribute("username", username);
+				if (user.getEmail() != null && !user.getEmail().equals("")) {
+					request.setAttribute("encryptemail",
+							BaseUtil.encrptEmail(user.getEmail()));
+					request.setAttribute("emailMD5",
+							StringMD5.longEncode(user.getEmail()));
+				}
+				if (user.getMobilephone() != null
+						&& !user.getMobilephone().equals("")) {
+					request.setAttribute("encryptmobilephone",
+							BaseUtil.encrptMobilephone(user.getMobilephone()));
+					request.setAttribute("mobilephoneMD5",
+							StringMD5.longEncode(user.getMobilephone()));
+				}
+				request.setAttribute("user", user);
 				return "safe/findPwdPage2";
 			}
 		} catch (Exception e) {
