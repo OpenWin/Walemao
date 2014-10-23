@@ -13,7 +13,7 @@ body {
 
 #loginForm {
 	margin: 200px auto;
-	width: 350px;
+	width: 650px;
 	height: 250px;
 }
 
@@ -32,7 +32,7 @@ body {
 }
 
 #loginForm .inputSubmit {
-	float: right;
+	float: left;
 	padding: 5px 15px;
 	cursor: pointer;
 	letter-spacing: 5px;
@@ -45,22 +45,29 @@ body {
 </head>
 <body>
 	<c:url var="regUrl" value="reg" />
-	<form:form action="${regUrl}" method="POST" id="loginForm" modelAttribute="user">
+	<form:form action="${regUrl}" method="POST" id="loginForm"
+		modelAttribute="user">
 		<fieldset>
 			<legend>
 				<strong>注册系统</strong>
 			</legend>
 			<!-- reg表单 -->
-			<form:label path="username">用户名 </form:label>
-			<form:input path="username" cssClass="form-control" />
-
-			<form:label path="password" style="margin-top: 5px;">密&nbsp;&nbsp;码</form:label>
-			<form:input path="password" cssclass="form-control" />
-
-			<form:label path="confirmPassword" style="margin-top: 5px;">确认密码</form:label>
-			<form:input path="confirmPassword" cssclass="form-control" />
-			
-			<input type="submit" value="登录" class="inputSubmit" />
+			<span><b>*</b>用户名：</span>
+			<form:input type="box" path="username" cssClass="form-control" />
+			<br> <span><b>*</b>请设置密码：</span>
+			<form:input type="password" path="password" cssclass="form-control" />
+			<br> <span><b>*</b>请确认密码：</span>
+			<form:input type="password" path="confirmPassword"
+				cssclass="form-control" />
+			<br> <span><b>*</b>验证手机：</span>
+			<form:input path="mobilephone" cssclass="form-control" />
+			<br> <span><b>*</b>短信验证码：</span>
+			<input name="authCode" type="text"/>
+			<br>
+			<input type="checkbox"/>
+			<label>我已阅读并同意<a href="#">《哇乐猫用户注册协议》</a></label>
+			<br>
+			<input type="submit" value="立即注册" class="inputSubmit" />
 		</fieldset>
 	</form:form>
 </body>
