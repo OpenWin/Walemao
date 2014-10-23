@@ -131,7 +131,16 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-
+		
+		<!-- Megastore-Share -->
+		<dependency>
+			<groupId>com.walemao</groupId>
+			<artifactId>Megastore-Share</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- MySql -->
 		<dependency>
 			<groupId>mysql</groupId>
