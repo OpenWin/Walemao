@@ -80,9 +80,9 @@ public class MUserAuthorityServiceImpl implements MUserService {
 	public String getUsername(String args, int type) {
 		// TODO Auto-generated method stub
 		if (type == 0) {
-			return userDao.getUserNameByMobilephone(args);
+			return userAttemptsDao.getUserNameByMobilephone(args);
 		} else {
-			return userDao.getUserNameByEmail(args);
+			return userAttemptsDao.getUserNameByEmail(args);
 		}
 	}
 
