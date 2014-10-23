@@ -1,5 +1,8 @@
 package com.walemao.megastore.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -119,20 +122,32 @@ public class MAuthenticationController {
 		return null;
 	}
 
+	/**
+	 * 找回密码第一步
+	 * @return
+	 */
 	@RequestMapping(value = "findPwd/index", method = RequestMethod.GET)
 	public String getFindPasswordIndexPage() {
 		return "safe/findPwdPage1";
 	}
 
+	/**
+	 * 找回密码第二步
+	 * @param name		输入内容
+	 * @param j_captcha	验证码
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
 	@RequestMapping(value = "findPwd/findPwd", method = RequestMethod.POST)
 	public String getFindPasswordFindPwdPage(
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String j_captcha,
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
-		
+
 		String message = "";
 		try {
-			if(RandomValidateCode.isCodeRight(request)){
+			if (RandomValidateCode.isCodeRight(request)) {
 				message = "验证码错误";
 				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
 				return "redirect:/findPwd/index";
@@ -205,5 +220,22 @@ public class MAuthenticationController {
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(usernameValidator);
+	}
+	
+	/**
+	 * 验证用户名
+	 * @param username
+	 * @return
+	 */
+	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
+	public @ResponseBody Map<String,Object> validateUser(String username) {
+		Map<String,Object> requstMap = new HashMap<String,Object>();
+		if (mUserService.getUser(username) == null) {
+			requstMap.put("status", "success");
+		} else {
+			requstMap.put("status", "error");
+			requstMap.put("message", "用户名已经被注册啦！");
+		}
+		return requstMap;
 	}
 }
