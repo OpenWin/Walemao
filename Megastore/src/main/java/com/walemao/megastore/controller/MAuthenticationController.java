@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.repository.UserDao;
+import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
 import com.walemao.megastore.util.BaseUtil;
@@ -126,16 +127,22 @@ public class MAuthenticationController {
 	@RequestMapping(value = "findPwd/findPwd", method = RequestMethod.POST)
 	public String getFindPasswordFindPwdPage(
 			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String kaptcha,
+			@RequestParam(required = false) String j_captcha,
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		
 		String message = "";
 		try {
+			if(RandomValidateCode.isCodeRight(request)){
+				message = "验证码错误";
+				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
+				return "redirect:/findPwd/index";
+			}
 			if (name == null || name.length() <= 0
 					|| name.equals("用户名/邮箱/已验证手机")) {
 				message = "请填写您的用户名/邮箱/已验证手机";
 				redirectAttributes.addFlashAttribute("nameMsg", message);
 				return "redirect:/findPwd/index";
-			} else if (kaptcha == null || kaptcha.length() <= 0) {
+			} else if (j_captcha == null || j_captcha.length() <= 0) {
 				message = "请输入验证码";
 				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
 				return "redirect:/findPwd/index";

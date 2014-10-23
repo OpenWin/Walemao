@@ -66,9 +66,9 @@ body {
 				id="name" class="inputText" style="margin-bottom: 15px;" /> <br />
 			<c:out value="${nameMsg}" />
 			<br /> <label for="kaptcha">验证码:</label> <input type="text"
-				name="kaptcha" width="20" id="kaptcha" class="kaptchainputText"
+				name="j_captcha" width="20" id="kaptcha" class="kaptchainputText"
 				style="margin-bottom: 15px;" /> <img src="../kaptcha.jpg"
-				id="kaptchaImage" width="120" />看不清？<a href="#" id="changeImg">换一张</a>
+				id="kaptchaImage" width="95" height="34" />看不清？<a href="#" id="changeImg">换一张</a>
 			<br />
 			<c:out value="${kaptchaMsg}" />
 			<br /> <input type="submit" value="下一步" class="inputSubmit" />
