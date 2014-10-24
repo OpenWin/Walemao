@@ -122,7 +122,7 @@ body {
 	});
 	function abc() {
 		$('#kaptchaImage').hide().attr('src',
-				'kaptcha.jpg?' + Math.floor(Math.random() * 100)).fadeIn();
+				'<c:url value="/kaptcha.jpg"/> ').fadeIn();
 	}
 </script>
 </html>
