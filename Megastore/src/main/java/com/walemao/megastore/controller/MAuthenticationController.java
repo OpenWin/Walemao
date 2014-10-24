@@ -50,6 +50,13 @@ public class MAuthenticationController {
 		binder.setValidator(usernameValidator);
 	}
 	
+	/**
+	 * 获取验证码
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/kaptcha.jpg")  
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) 
     		throws Exception

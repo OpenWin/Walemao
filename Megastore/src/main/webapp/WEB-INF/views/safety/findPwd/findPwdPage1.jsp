@@ -67,10 +67,10 @@ body {
 			<c:out value="${nameMsg}" />
 			<br /> <label for="kaptcha">验证码:</label> <input type="text"
 				name="j_captcha" width="20" id="kaptcha" class="kaptchainputText"
-				style="margin-bottom: 15px;" /> <img src="<c:url value="/kaptcha.jpg" />"
-				id="kaptchaImage" width="95" height="34" />看不清？<a href="#" id="changeImg">换一张</a>
-			<br />
-			<br /> <input type="submit" value="下一步" class="inputSubmit" />
+				style="margin-bottom: 15px;" /> <img
+				src="<c:url value="/kaptcha.jpg" />" id="kaptchaImage" width="95"
+				height="34" />看不清？<a href="#" id="changeImg">换一张</a> <br /> <br />
+			<input type="submit" value="下一步" class="inputSubmit" />
 		</fieldset>
 	</form:form>
 </body>
@@ -84,7 +84,7 @@ body {
 	});
 	function abc() {
 		$('#kaptchaImage').hide().attr('src',
-				'kaptcha.jpg?' + Math.floor(Math.random() * 100)).fadeIn();
+				'<c:url value="/kaptcha.jpg"/>').fadeIn();
 	}
 </script>
 </html>
