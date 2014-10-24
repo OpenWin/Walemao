@@ -104,4 +104,16 @@ public class MUserAuthorityServiceImpl implements MUserService {
 		// TODO Auto-generated method stub
 		return userDao.getUser(username);
 	}
+
+	@Override
+	public boolean getMobilephoneExist(String mobilephone) {
+		// TODO Auto-generated method stub
+		return userAttemptsDao.CheckMobilephone(mobilephone);
+	}
+
+	@Override
+	public boolean getEmailExist(String email) {
+		// TODO Auto-generated method stub
+		return userAttemptsDao.CheckEmail(email);
+	}
 }

@@ -69,7 +69,7 @@ public class MSafetyController {
 	 */
 	@RequestMapping(value = "/findPwd", method = RequestMethod.GET)
 	public String getFindPasswordIndexPage() {
-		return "safe/findPwd/findPwdPage1";
+		return "safety/findPwd/findPwdPage1";
 	}
 
 	/**

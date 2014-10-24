@@ -1,12 +1,10 @@
 package com.walemao.megastore.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +21,16 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
-import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
-import com.walemao.megastore.security.util.SecurityAttributes;
-import com.walemao.megastore.security.util.SecurityAttributes.LOGIN_ERROR;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
+import com.walemao.megastore.sms.Sms;
+import com.walemao.megastore.sms.SmsIhuyiImpl;
 import com.walemao.megastore.util.BaseUtil;
-import com.walemao.megastore.util.StringMD5;
 
 @Controller
 public class MAuthenticationController {
@@ -47,7 +42,7 @@ public class MAuthenticationController {
 
 	@Autowired
 	private MRegisterValidator usernameValidator;
-	
+
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(usernameValidator);
@@ -102,6 +97,7 @@ public class MAuthenticationController {
 
 	/**
 	 * 获取用户注册页面
+	 * 
 	 * @param user
 	 * @return
 	 */
@@ -112,23 +108,32 @@ public class MAuthenticationController {
 
 	/**
 	 * 用户注册
+	 * 
 	 * @param user
 	 * @param result
 	 * @return
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public @ResponseBody String processRegistration(
-			@Validated @ModelAttribute("user") User user, BindingResult result) {
+	public String processRegistration(int code,
+			@Validated @ModelAttribute("user") User user,
+			HttpServletRequest request, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
-			return result.getFieldErrors().toString();
+			// return result.getFieldError().toString();
+			redirectAttributes.addFlashAttribute("result", result);
+			return "redirect:/register";
 		}
-
+		// 验证短信或邮箱验证码
+		if (code != Integer.parseInt(request.getAttribute("code").toString())) {
+			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
+			return "redirect:/register";
+		}
 		if (mUserService.registerUser(user)) {
 			return "registration success";
 		}
-		return "registration failed";
+		return null;
 	}
-	
+
 	/**
 	 * 验证用户名
 	 * 
@@ -136,23 +141,70 @@ public class MAuthenticationController {
 	 * @return error页面返回连接
 	 */
 	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> validateUser(String username) {
-		Map<String, Object> requstMap = new HashMap<String, Object>();
+	public @ResponseBody String validateUser(String username) {
 		if (mUserService.getUser(username) == null) {
-			requstMap.put("status", "success");
-		} else {
-			requstMap.put("status", "error");
+			return "success";
 		}
-		return requstMap;
+		return "error";
 	}
 
-	
+	/**
+	 * 验证手机
+	 * 
+	 * @param mobilephone
+	 * @return
+	 */
+	@RequestMapping(value = "validateuser/isPinMobilePhone", method = RequestMethod.GET)
+	public @ResponseBody String validateMobilephone(String mobilephone) {
+		if (mUserService.getMobilephoneExist(mobilephone)) {
+			return "success";
+		}
+		return "error";
+	}
+
+	/**
+	 * 验证邮箱
+	 * 
+	 * @param email
+	 * @return
+	 */
+	@RequestMapping(value = "validateuser/isPinEmail", method = RequestMethod.GET)
+	public @ResponseBody String validateEmail(String email) {
+		if (mUserService.getEmailExist(email)) {
+			return "success";
+		}
+		return "error";
+	}
 
 	@RequestMapping(value = "verification", method = RequestMethod.POST)
-	public String sendVericationCode(String emailAddress) {
+	public @ResponseBody String sendVericationCode(String emailAddress) {
 		mUserService.sendVerificationCode("username", emailAddress);
 		return "";
 	}
 
+	/**
+	 * 发送手机验证码
+	 * 
+	 * @param mobilephone
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "getMpCode", method = RequestMethod.GET)
+	public @ResponseBody String sendMobilephoneVericationCode(
+			String mobilephone, HttpServletRequest request) {
+		int code = BaseUtil.random();
+		request.getSession().setAttribute("code", code);
+		Sms sms = new SmsIhuyiImpl();
+		Map<String, Object> map;
+		try {
+			map = sms.excute(code, mobilephone, 0);
+			if (map.get("status").equals("success")) {
+				return "success";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "error";
+	}
 
 }
