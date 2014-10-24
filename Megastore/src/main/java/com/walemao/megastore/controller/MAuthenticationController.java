@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
-import com.walemao.megastore.repository.UserDao;
-import com.walemao.megastore.security.Exception.SecurityAttributes;
-import com.walemao.megastore.security.Exception.SecurityAttributes.LOGIN_ERROR;
 import com.walemao.megastore.security.provider.RandomValidateCode;
+import com.walemao.megastore.security.util.LoginAttributeJudge;
+import com.walemao.megastore.security.util.SecurityAttributes;
+import com.walemao.megastore.security.util.SecurityAttributes.LOGIN_ERROR;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
 import com.walemao.megastore.util.BaseUtil;
@@ -78,14 +78,7 @@ public class MAuthenticationController {
 	public String getLoginPage(
 			@CookieValue(value = "_plt", required = false) String pltCookie,
 			HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		LOGIN_ERROR loginError = (LOGIN_ERROR) session
-				.getAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
-		if (loginError != null) {
-			request.setAttribute(SecurityAttributes.LOGIN_ERROR_KEY, loginError);
-			session.removeAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
-		}
-
+		LoginAttributeJudge.RedirectSessionAttribute(request);
 		request.setAttribute("username", pltCookie);
 		return "login";
 	}
