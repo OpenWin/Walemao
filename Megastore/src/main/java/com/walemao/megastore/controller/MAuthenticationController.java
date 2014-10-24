@@ -47,25 +47,10 @@ public class MAuthenticationController {
 
 	@Autowired
 	private MRegisterValidator usernameValidator;
-
-	// Display the form on the get request
-	@RequestMapping(value = "/reg", method = RequestMethod.GET)
-	public String getRegistrationPage(@ModelAttribute("user") User user) {
-		return "registration";
-	}
-
-	// Process the form.
-	@RequestMapping(value = "reg", method = RequestMethod.POST)
-	public @ResponseBody String processRegistration(
-			@Validated @ModelAttribute("user") User user, BindingResult result) {
-		if (result.hasErrors()) {
-			return result.getFieldErrors().toString();
-		}
-
-		if (mUserService.registerUser(user)) {
-			return "registration success";
-		}
-		return "registration failed";
+	
+	@InitBinder
+	protected void initBinder(WebDataBinder binder) {
+		binder.setValidator(usernameValidator);
 	}
 
 	/**
@@ -122,12 +107,68 @@ public class MAuthenticationController {
 		return "index";
 	}
 
-	@RequestMapping(value = "modify_pwd", method = RequestMethod.GET)
-	public String getModifyPasswordPage() {
-		return "modify_pwd";
+	/**
+	 * 获取用户注册页面
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/register", method = RequestMethod.GET)
+	public String getRegistrationPage(@ModelAttribute("user") User user) {
+		return "/register/registration";
 	}
 
-	@RequestMapping(value = "user/modify_pwd", method = RequestMethod.POST)
+	/**
+	 * 用户注册
+	 * @param user
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public @ResponseBody String processRegistration(
+			@Validated @ModelAttribute("user") User user, BindingResult result) {
+		if (result.hasErrors()) {
+			return result.getFieldErrors().toString();
+		}
+
+		if (mUserService.registerUser(user)) {
+			return "registration success";
+		}
+		return "registration failed";
+	}
+	
+	/**
+	 * 验证用户名
+	 * 
+	 * @param username
+	 * @return error页面返回连接
+	 */
+	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
+	public @ResponseBody Map<String, Object> validateUser(String username) {
+		Map<String, Object> requstMap = new HashMap<String, Object>();
+		if (mUserService.getUser(username) == null) {
+			requstMap.put("status", "success");
+		} else {
+			requstMap.put("status", "error");
+		}
+		return requstMap;
+	}
+
+	/**
+	 * 获取修改密码页面
+	 * @return
+	 */
+	@RequestMapping(value = "/safe/modify/pwd", method = RequestMethod.GET)
+	public String getModifyPasswordPage() {
+		return "/safe/modifyPwd/modifyPwd";
+	}
+
+	/**
+	 * 修改密码
+	 * @param password
+	 * @param newPassword
+	 * @return
+	 */
+	@RequestMapping(value = "/safe/modify/pwd", method = RequestMethod.POST)
 	public @ResponseBody String changePassword(String password,
 			String newPassword) {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder
@@ -151,9 +192,9 @@ public class MAuthenticationController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "findPwd/index", method = RequestMethod.GET)
+	@RequestMapping(value = "/safe/findPwd", method = RequestMethod.GET)
 	public String getFindPasswordIndexPage() {
-		return "safe/findPwdPage1";
+		return "safe/findPwd/findPwdPage1";
 	}
 
 	/**
@@ -167,7 +208,7 @@ public class MAuthenticationController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequestMapping(value = "findPwd/findPwd", method = RequestMethod.POST)
+	@RequestMapping(value = "/safe/findPwd/validation", method = RequestMethod.POST)
 	public String getFindPasswordFindPwdPage(
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String j_captcha,
@@ -188,7 +229,7 @@ public class MAuthenticationController {
 			} else if (j_captcha == null || j_captcha.length() <= 0) {
 				message = "请输入验证码";
 				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
-				return "redirect:/findPwd/index";
+				return "redirect:/safe/findPwd";
 			} else {
 				String username = name;
 				if (BaseUtil.isEmail(name)) {
@@ -220,7 +261,7 @@ public class MAuthenticationController {
 							StringMD5.longEncode(user.getMobilephone()));
 				}
 				request.setAttribute("user", user);
-				return "safe/findPwdPage2";
+				return "safe/findPwd/findPwdPage2";
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -229,14 +270,14 @@ public class MAuthenticationController {
 		return null;
 	}
 
-	@RequestMapping(value = "findPwd/resetPassword", method = RequestMethod.POST)
+	@RequestMapping(value = "/safe/findPwd/resetPassword", method = RequestMethod.POST)
 	public String getFindPasswordResetPasswordPage() {
-		return "safe/findPwdPage3";
+		return "safe/findPwd/findPwdPage3";
 	}
 
-	@RequestMapping(value = "findPwd/resetPasswdSuccess", method = RequestMethod.POST)
+	@RequestMapping(value = "/safe/findPwd/resetPasswdSuccess", method = RequestMethod.POST)
 	public String getFindPasswordResetPasswdSuccessPage() {
-		return "safe/findPwdPage4";
+		return "safe/findPwd/findPwdPage4";
 	}
 
 	@RequestMapping(value = "verification", method = RequestMethod.POST)
@@ -245,25 +286,5 @@ public class MAuthenticationController {
 		return "";
 	}
 
-	@InitBinder
-	protected void initBinder(WebDataBinder binder) {
-		binder.setValidator(usernameValidator);
-	}
 
-	/**
-	 * 验证用户名
-	 * 
-	 * @param username
-	 * @return error页面返回连接
-	 */
-	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> validateUser(String username) {
-		Map<String, Object> requstMap = new HashMap<String, Object>();
-		if (mUserService.getUser(username) == null) {
-			requstMap.put("status", "success");
-		} else {
-			requstMap.put("status", "error");
-		}
-		return requstMap;
-	}
 }
