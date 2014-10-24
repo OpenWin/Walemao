@@ -68,24 +68,39 @@ public class MAuthenticationController {
 		return "registration failed";
 	}
 
+	/**
+	 * 获取登录页面
+	 * 
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value = "/login.html", method = RequestMethod.GET)
 	public String getLoginPage(
-			@CookieValue(value = "foo", required = false) String fooCookie,
+			@CookieValue(value = "_plt", required = false) String pltCookie,
 			HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		LOGIN_ERROR loginError = (LOGIN_ERROR)session.getAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
-		if (loginError != null)
-		{
+		LOGIN_ERROR loginError = (LOGIN_ERROR) session
+				.getAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
+		if (loginError != null) {
 			request.setAttribute(SecurityAttributes.LOGIN_ERROR_KEY, loginError);
 			session.removeAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
 		}
-		request.setAttribute("username", fooCookie);
+
+		request.setAttribute("username", pltCookie);
 		return "login";
 	}
 
+	/**
+	 * 获取主页页面
+	 * 
+	 * @param pstCookie
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value = "index", method = RequestMethod.GET)
 	public String getIndexPage(
-			@CookieValue(value = "foo", required = false) String fooCookie,
+			@CookieValue(value = "_pst", required = false) String pstCookie,
 			HttpServletRequest request, HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
@@ -94,7 +109,7 @@ public class MAuthenticationController {
 			Object principal = auth.getPrincipal();
 			if (principal instanceof UserDetails) {
 				UserDetails user = (UserDetails) principal;
-				Cookie foo = new Cookie("foo", user.getUsername());
+				Cookie foo = new Cookie("_pst", user.getUsername());
 				foo.setMaxAge(1209600);
 				response.addCookie(foo);
 				request.setAttribute("islogin", 1);
@@ -103,7 +118,7 @@ public class MAuthenticationController {
 			}
 		}
 
-		request.setAttribute("username", fooCookie);
+		request.setAttribute("username", pstCookie);
 		return "index";
 	}
 
@@ -133,6 +148,7 @@ public class MAuthenticationController {
 
 	/**
 	 * 找回密码第一步
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "findPwd/index", method = RequestMethod.GET)
@@ -142,8 +158,11 @@ public class MAuthenticationController {
 
 	/**
 	 * 找回密码第二步
-	 * @param name		输入内容
-	 * @param j_captcha	验证码
+	 * 
+	 * @param name
+	 *            输入内容
+	 * @param j_captcha
+	 *            验证码
 	 * @param request
 	 * @param redirectAttributes
 	 * @return
@@ -230,15 +249,16 @@ public class MAuthenticationController {
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(usernameValidator);
 	}
-	
+
 	/**
 	 * 验证用户名
+	 * 
 	 * @param username
 	 * @return error页面返回连接
 	 */
 	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
-	public @ResponseBody Map<String,Object> validateUser(String username) {
-		Map<String,Object> requstMap = new HashMap<String,Object>();
+	public @ResponseBody Map<String, Object> validateUser(String username) {
+		Map<String, Object> requstMap = new HashMap<String, Object>();
 		if (mUserService.getUser(username) == null) {
 			requstMap.put("status", "success");
 		} else {
