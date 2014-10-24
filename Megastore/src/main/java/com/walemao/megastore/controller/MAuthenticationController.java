@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
+import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
@@ -46,6 +48,14 @@ public class MAuthenticationController {
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(usernameValidator);
+	}
+	
+	@RequestMapping(value = "/kaptcha.jpg")  
+    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) 
+    		throws Exception
+	{
+		RandomValidateCode.getRandcode(request, response);
+		return null;
 	}
 
 	/**

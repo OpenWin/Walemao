@@ -67,10 +67,9 @@ body {
 			<c:out value="${nameMsg}" />
 			<br /> <label for="kaptcha">验证码:</label> <input type="text"
 				name="j_captcha" width="20" id="kaptcha" class="kaptchainputText"
-				style="margin-bottom: 15px;" /> <img src="../kaptcha.jpg"
+				style="margin-bottom: 15px;" /> <img src="<c:url value="/kaptcha.jpg" />"
 				id="kaptchaImage" width="95" height="34" />看不清？<a href="#" id="changeImg">换一张</a>
 			<br />
-			<c:out value="${kaptchaMsg}" />
 			<br /> <input type="submit" value="下一步" class="inputSubmit" />
 		</fieldset>
 	</form:form>

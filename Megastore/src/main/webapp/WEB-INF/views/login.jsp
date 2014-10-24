@@ -52,7 +52,7 @@ body {
 </head>
 <body>
 	<c:url var="loginUrl" value="/login" />
-	
+
 	<form:form action="${loginUrl}" method="POST" id="loginForm">
 		<fieldset>
 			<legend>
@@ -72,8 +72,9 @@ body {
 					<div class="col-sm-8">
 						<div class="input-group">
 							<input type="text" name="j_captcha" class="form-control" /> <span
-								class="input-group-addon"><img id="kaptcha" width="95"
-								height="34" src="<c:url value="/kaptcha.jpg" />" /></span>
+								class="input-group-addon"><img id="kaptchaImage" width="95"
+								height="34" src="<c:url value="/kaptcha.jpg" />" /> 看不清？<a
+								href="#">换一张</a></span>
 						</div>
 					</div>
 				</div>
@@ -105,10 +106,23 @@ body {
 				<div class="msg">You have been logged out.</div>
 			</c:if>
 			<br /> <input type="checkbox" name="_spring_security_remember_me" />自动登录
-			 <a href="<c:url value="/safety/findPwd"/>">忘记密码？</a><br /> <input
+			<a href="<c:url value="/safety/findPwd"/>">忘记密码？</a><br /> <input
 				type="submit" value="登录" class="inputSubmit" /><br /> <input
 				type="button" onclick="location='register'" class="reg" value="免费注册" />
 		</fieldset>
 	</form:form>
 </body>
+<%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
+<script type="text/javascript">
+	$('#kaptchaImage').click(function() {
+		abc();
+	});
+	$('#changeImg').click(function() {
+		abc();
+	});
+	function abc() {
+		$('#kaptchaImage').hide().attr('src',
+				'kaptcha.jpg?' + Math.floor(Math.random() * 100)).fadeIn();
+	}
+</script>
 </html>
