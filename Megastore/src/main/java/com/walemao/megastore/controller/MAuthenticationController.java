@@ -84,8 +84,8 @@ public class MAuthenticationController {
 		if (loginError != null) {
 			request.setAttribute(SecurityAttributes.LOGIN_ERROR_KEY, loginError);
 			session.removeAttribute(SecurityAttributes.LOGIN_ERROR_KEY);
+			request.setAttribute("username", pltCookie);
 		}
-
 		request.setAttribute("username", pltCookie);
 		return "login";
 	}
