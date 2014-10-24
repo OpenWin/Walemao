@@ -61,14 +61,16 @@ body {
 				cssclass="form-control" />
 			<br> <span><b>*</b>验证手机：</span>
 			<form:input path="mobilephone" cssclass="form-control" />
-			<br> <span><b>*</b>短信验证码：</span>
-			<input name="authCode" type="text"/>
-			<br>
-			<input type="checkbox"/>
-			<label>我已阅读并同意<a href="#">《哇乐猫用户注册协议》</a></label>
-			<br>
-			<input type="submit" value="立即注册" class="inputSubmit" />
+			<br> <span><b>*</b>短信验证码：</span> <input name="authCode"
+				type="text" /> <br> <input id="thisCheckbox"
+				name="thisCheckbox" checked="checked" type="checkbox" /> <label>我已阅读并同意<a
+				href="#">《哇乐猫用户注册协议》</a></label> <br> <input type="submit" value="立即注册"
+				class="inputSubmit" />
 		</fieldset>
 	</form:form>
 </body>
+<%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
+<script type="text/javascript">
+	
+</script>
 </html>

@@ -64,11 +64,11 @@
 			<artifactId>spring-webmvc-portlet</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-		<dependency>  
-            <groupId>org.springframework</groupId>  
-            <artifactId>spring-test</artifactId>  
-            <version>${org.springframework-version}</version>  
-        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
 		<!-- Spring Security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -90,7 +90,7 @@
 			<artifactId>spring-security-taglibs</artifactId>
 			<version>${org.springframework.security-version}</version>
 		</dependency>
-		
+
 		<!-- Megastore-Share -->
 		<dependency>
 			<groupId>com.walemao</groupId>
@@ -99,7 +99,7 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- Megastore-Base -->
 		<dependency>
 			<groupId>com.walemao</groupId>
@@ -115,7 +115,7 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Megastore-Security -->
 		<dependency>
 			<groupId>com.walemao</groupId>
@@ -276,12 +276,18 @@
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- kaptcha -->
 		<dependency>
-			<groupId>com.google.code.kaptcha</groupId>  
-   			 <artifactId>kaptcha</artifactId>  
-    		<version>2.3.2</version>  
+			<groupId>com.google.code.kaptcha</groupId>
+			<artifactId>kaptcha</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springmodules</groupId>
+			<artifactId>spring-modules-validation</artifactId>
+			<version>0.5</version>
 		</dependency>
 	</dependencies>
 	<build>
