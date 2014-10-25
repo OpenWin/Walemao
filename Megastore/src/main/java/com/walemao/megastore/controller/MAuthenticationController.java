@@ -2,6 +2,8 @@ package com.walemao.megastore.controller;
 
 import java.util.Map;
 
+
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +34,7 @@ import com.walemao.megastore.service.MUserService;
 import com.walemao.megastore.service.Validation.MRegisterValidator;
 import com.walemao.megastore.sms.Sms;
 import com.walemao.megastore.sms.SmsIhuyiImpl;
+import com.walemao.megastore.sms.SmsWeimiImpl;
 import com.walemao.megastore.util.BaseUtil;
 
 @Controller
@@ -211,7 +214,9 @@ public class MAuthenticationController {
 			String mobilephone, HttpServletRequest request) {
 		int code = BaseUtil.random();
 		request.getSession().setAttribute("code", code);
-		Sms sms = new SmsIhuyiImpl();
+		//接口切换   SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
+		//Sms sms = new SmsIhuyiImpl();
+		Sms sms = new SmsWeimiImpl();
 		Map<String, Object> map;
 		try {
 			map = sms.excute(code, mobilephone, 0);
