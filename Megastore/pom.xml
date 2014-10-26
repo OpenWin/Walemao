@@ -100,7 +100,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- Megastore-Base -->
+		<!-- Megastore-DAL -->
 		<dependency>
 			<groupId>com.walemao</groupId>
 			<artifactId>Megastore-DAL</artifactId>
