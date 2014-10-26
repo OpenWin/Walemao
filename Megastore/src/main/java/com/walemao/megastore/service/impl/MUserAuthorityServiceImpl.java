@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.domain.UserAuthority;
+import com.walemao.megastore.domain.UserBase;
 import com.walemao.megastore.repository.UserAuthorityDao;
+import com.walemao.megastore.repository.UserBaseDao;
 import com.walemao.megastore.repository.UserDao;
 import com.walemao.megastore.security.jdbc.UserAttemptsJdbcDaoImpl;
 import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
@@ -21,6 +23,9 @@ public class MUserAuthorityServiceImpl implements MUserService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private UserBaseDao userBaseDao;
 
 	@Autowired
 	private UserAttemptsJdbcDaoImpl userAttemptsDao;
@@ -45,7 +50,11 @@ public class MUserAuthorityServiceImpl implements MUserService {
 				user.getPassword(), salt));
 		user.setSalt(salt);
 		userDao.insert(user);
-
+		
+		UserBase userBase = new UserBase();
+		userBase.setUsername(user.getUsername());
+		userBaseDao.insert(userBase);
+		
 		UserAuthority author = new UserAuthority();
 		author.setUsername(user.getUsername());
 		author.setAuthority("ROLE_USER");
