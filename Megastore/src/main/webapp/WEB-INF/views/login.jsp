@@ -72,9 +72,9 @@ body {
 					<div class="col-sm-8">
 						<div class="input-group">
 							<input type="text" name="j_captcha" class="form-control" /> <span
-								class="input-group-addon"><img id="kaptchaImage" width="95"
-								height="34" src="<c:url value="/kaptcha.jpg" />" /> 看不清？<a
-								href="#">换一张</a></span>
+								class="input-group-addon"><img id="kaptchaImage"
+								width="95" height="34" src="<c:url value="/kaptcha.jpg" />" />
+								看不清？<a href="#">换一张</a></span>
 						</div>
 					</div>
 				</div>
@@ -111,8 +111,14 @@ body {
 				type="button" onclick="location='register'" class="reg" value="免费注册" />
 		</fieldset>
 	</form:form>
+
+	<div class="socket"></div>
 </body>
 <%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
+<script type="text/javascript"
+	src="<c:url value="/resources/js/sockjs.min.js"/>"></script>
+<script type="text/javascript"
+	src="<c:url value="/resources/js/stomp.js"/>"></script>
 <script type="text/javascript">
 	$('#kaptchaImage').click(function() {
 		abc();
@@ -121,8 +127,23 @@ body {
 		abc();
 	});
 	function abc() {
-		$('#kaptchaImage').hide().attr('src',
-				'<c:url value="/kaptcha.jpg"/> ').fadeIn();
+		$('#kaptchaImage').hide().attr('src', '<c:url value="/kaptcha.jpg"/> ')
+				.fadeIn();
 	}
+
+	/** WebSocket通信 **/
+	var socket = new SockJS('<c:url value="/notice/entry"/> ');
+	var stompClient = Stomp.over(socket);
+	var stompClient = Stomp.over(socket);
+	var connectCallback = function() {
+		console.log("完成服务器的链接！");
+		stompClient.subscribe('/topic/notice/exit', function(data) {
+			$('.socket').append('<p>订阅的消息： ' + data + '</p>');
+		});
+	};
+
+	var errorCallback = function(error) {
+		console.log("发生错误：" + error.headers.message);
+	};
 </script>
 </html>
