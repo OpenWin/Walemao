@@ -19,9 +19,9 @@ public interface MUserService {
 	 * @param user
 	 * @return
 	 */
-	public boolean registerUser(User user);
+	public boolean insertUser(User user);
 
-	public boolean changePassword(String username, String oldRawPassword,
+	public boolean updatePassword(String username, String oldRawPassword,
 			String newRawPassword);
 
 	public void sendVerificationCode(String usernmae, String emailAddress);

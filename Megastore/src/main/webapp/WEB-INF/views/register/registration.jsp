@@ -5,6 +5,9 @@
 <html lang="zh_CN">
 <head>
 <meta charset="UTF-8">
+<meta name="_csrf" content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN -->
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
 <title>用户注册</title>
 <style type="text/css">
 body {
@@ -52,7 +55,7 @@ body {
 </style>
 </head>
 <body>
-	<c:url var="regUrl" value="reg" />
+	<c:url var="regUrl" value="/register" />
 	<form:form action="${regUrl}" method="POST" id="regForm"
 		modelAttribute="user">
 		<fieldset>
@@ -63,31 +66,31 @@ body {
 			<table>
 				<tr>
 					<td><b>*</b>用户名：</td>
-					<td><form:input type="box" path="username" /></td>
+					<td><form:input path="username" /></td>
 					<td></td>
 				</tr>
 
 				<tr>
 					<td><b>*</b>请设置密码：</td>
-					<td><form:input type="password" path="password" /></td>
+					<td><form:password path="password" /></td>
 					<td></td>
 				</tr>
 
 				<tr>
 					<td><b>*</b>请确认密码：</td>
-					<td><input type="password" name="comfirmPassword" /></td>
+					<td><form:password path="confirmPassword" /></td>
 					<td></td>
 				</tr>
 
 				<tr>
 					<td><b>*</b>邮箱：</td>
-					<td><input type="text" name="email" /></td>
+					<td><form:input path="email" /></td>
 					<td></td>
 				</tr>
 
 				<tr>
 					<td><b>*</b>验证手机：</td>
-					<td><input type="text" name="mobilephone" /></td>
+					<td><form:input path="mobilephone" /></td>
 					<td></td>
 				</tr>
 				    

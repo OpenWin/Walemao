@@ -2,8 +2,6 @@ package com.walemao.megastore.controller;
 
 import java.util.Map;
 
-
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -52,18 +51,18 @@ public class MAuthenticationController {
 	protected void initBinder(WebDataBinder binder) {
 		binder.setValidator(usernameValidator);
 	}
-	
+
 	/**
 	 * 获取验证码
+	 * 
 	 * @param request
 	 * @param response
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/kaptcha.jpg")  
-    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) 
-    		throws Exception
-	{
+	@RequestMapping(value = "/kaptcha.jpg")
+	public ModelAndView handleRequest(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		RandomValidateCode.getRandcode(request, response);
 		return null;
 	}
@@ -134,24 +133,32 @@ public class MAuthenticationController {
 	 * @return
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String processRegistration(int code,
+	public String processRegistration(
+			@RequestParam(required = false) String authCode,
 			@Validated @ModelAttribute("user") User user,
 			HttpServletRequest request, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			// return result.getFieldError().toString();
-			redirectAttributes.addFlashAttribute("result", result);
+			redirectAttributes.addFlashAttribute("result", result.getAllErrors());
 			return "redirect:/register";
 		}
 		// 验证短信或邮箱验证码
-		if (code != Integer.parseInt(request.getAttribute("code").toString())) {
+		if (authCode == null) {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return "redirect:/register";
 		}
-		if (mUserService.registerUser(user)) {
+		try{
+			mUserService.insertUser(user);
 			return "registration success";
+			
+		}catch(Exception e){
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
-		return null;
+		
+		redirectAttributes.addFlashAttribute("erroCode", "注册失败！");
+		return "redirect:/register";
 	}
 
 	/**
@@ -214,8 +221,8 @@ public class MAuthenticationController {
 			String mobilephone, HttpServletRequest request) {
 		int code = BaseUtil.random();
 		request.getSession().setAttribute("code", code);
-		//接口切换   SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
-		//Sms sms = new SmsIhuyiImpl();
+		// 接口切换 SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
+		// Sms sms = new SmsIhuyiImpl();
 		Sms sms = new SmsWeimiImpl();
 		Map<String, Object> map;
 		try {

@@ -54,7 +54,7 @@ public class MSafetyController {
 		System.out.println(userDetails.getUsername() + " -modify_pwd ");
 		System.out.println("password:" + password + "\nnew password:"
 				+ newPassword);
-		if (mUserService.changePassword(userDetails.getUsername(), password,
+		if (mUserService.updatePassword(userDetails.getUsername(), password,
 				newPassword)) {
 			System.out.println("Modify password sucessfully.");
 		}

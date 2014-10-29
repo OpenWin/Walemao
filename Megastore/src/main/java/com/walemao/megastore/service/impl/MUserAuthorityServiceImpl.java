@@ -45,7 +45,7 @@ public class MUserAuthorityServiceImpl implements MUserService {
 	private MailSender mailSender;
 
 	@Override
-	public boolean registerUser(User user) {
+	public boolean insertUser(User user) {
 		if (userAttemptsDao.CheckUsername(user.getUsername())) {
 			return false;
 		}
@@ -74,7 +74,7 @@ public class MUserAuthorityServiceImpl implements MUserService {
 
 	@Override
 	@Secured(value = "ROLE_USER")
-	public boolean changePassword(String username, String oldRawPassword,
+	public boolean updatePassword(String username, String oldRawPassword,
 			String newRawPassword) {
 		if (!userAttemptsDao.CheckUsername(username)) {
 			System.out.println("check username");
