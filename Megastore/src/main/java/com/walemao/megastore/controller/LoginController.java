@@ -155,24 +155,32 @@ public class LoginController {
 			HttpServletResponse response,
 			BindingResult result,
 			RedirectAttributes redirectAttributes) {
+		
+		String errorRedirectUrl = "redirect:/register";
+		String successRedirectUrl = "redirect:/index";
+		
 		if (result.hasErrors()) {
 			// return result.getFieldError().toString();
 			redirectAttributes.addFlashAttribute("result",
 					result.getAllErrors());
-			return "redirect:/register";
+			return errorRedirectUrl;
 		}
 		// 验证短信或邮箱验证码
 		Object codeAttri = request.getSession().getAttribute("code");
 		if (codeAttri != null && !authCode.equals(codeAttri.toString())) {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
-			return "redirect:/register";
+			return errorRedirectUrl;
 		}
 		
 		try
 		{
-			mUserService.insertUser(user);
-			if (getLoginFilter().registToLoginFilter(request, response))
-				return "redirect:/index";
+			if (!mUserService.insertUser(user))
+			{
+				redirectAttributes.addFlashAttribute("erroCode", "用户已存在");
+				return errorRedirectUrl;
+			}
+			else if (getLoginFilter().registToLoginFilter(request, response))
+				return successRedirectUrl;
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -180,7 +188,7 @@ public class LoginController {
 		}
 
 		redirectAttributes.addFlashAttribute("erroCode", "注册失败！");
-		return "redirect:/register";
+		return errorRedirectUrl;
 	}
 
 	/**
