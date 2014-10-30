@@ -47,7 +47,10 @@
 		<websocket:stomp-endpoint path="/notice/entry" />
 		<websocket:simple-broker prefix="/topic" />
 	</websocket:message-broker>
-
-	<context:component-scan base-package="com.walemao.megastore" />
+	
+	<context:component-scan base-package="com.walemao.megastore">
+	   <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+       <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
 
 </beans:beans>
