@@ -1,5 +1,6 @@
 package com.walemao.megastore.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -209,11 +210,12 @@ public class LoginController {
 	 * 
 	 * @param emailAddress
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
-	public @ResponseBody String sendVericationCode(String emailAddress) {
+	public @ResponseBody String sendVericationCode(String emailAddress) throws UnsupportedEncodingException {
 		
-		if (!mUserService.getEmailExist(emailAddress)) {
+		if (mUserService.getEmailExist(emailAddress)) {
 			return "邮箱已被注册过了，请更换其他邮箱！";
 		}
 		int code = BaseUtil.random();
@@ -236,7 +238,7 @@ public class LoginController {
 	@RequestMapping(value = "sendMpCode", method = RequestMethod.POST)
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
-		if (!mUserService.getMobilephoneExist(mobilephone)) {
+		if (mUserService.getMobilephoneExist(mobilephone)) {
 			return "手机已被注册过了，请更换其他手机！";
 		}
 		int code = BaseUtil.random();

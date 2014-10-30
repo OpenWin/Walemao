@@ -4,10 +4,13 @@
 		<wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/com/walemao/Megastore-Security/1.0.0-BUILD-SNAPSHOT/Megastore-Security-1.0.0-BUILD-SNAPSHOT.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module archiveName="Megastore-Share-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Megastore-Share/Megastore-Share">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/overlay/prj/Megastore-Security?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/com/walemao/Megastore-DAL/1.0.0-BUILD-SNAPSHOT/Megastore-DAL-1.0.0-BUILD-SNAPSHOT.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+        <dependent-module deploy-path="/" handle="module:/overlay/prj/Megastore-DAL?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/slf/?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
