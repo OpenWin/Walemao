@@ -30,22 +30,22 @@ import com.walemao.megastore.domain.User;
 import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.service.MUserService;
-import com.walemao.megastore.service.Validation.MRegisterValidator;
+import com.walemao.megastore.service.Validation.RegisterValidator;
 import com.walemao.megastore.sms.Sms;
 import com.walemao.megastore.sms.SmsIhuyiImpl;
 import com.walemao.megastore.sms.SmsWeimiImpl;
 import com.walemao.megastore.util.BaseUtil;
 
 @Controller
-public class MAuthenticationController {
+public class LoginController {
 	private Logger logger = LoggerFactory
-			.getLogger(MAuthenticationController.class);
+			.getLogger(LoginController.class);
 
 	@Autowired
 	private MUserService mUserService;
 
 	@Autowired
-	private MRegisterValidator usernameValidator;
+	private RegisterValidator usernameValidator;
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -148,7 +148,9 @@ public class MAuthenticationController {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return "redirect:/register";
 		}
-		try{
+		
+		try
+		{
 			mUserService.insertUser(user);
 			return "registration success";
 			

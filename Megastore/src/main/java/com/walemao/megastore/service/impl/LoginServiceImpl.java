@@ -1,5 +1,6 @@
 package com.walemao.megastore.service.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,10 +20,11 @@ import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
 import com.walemao.megastore.service.MUserService;
 
 @Service
-public class MUserAuthorityServiceImpl implements MUserService {
+public class LoginServiceImpl implements MUserService {
 
 	private static final String fromAddress = "walemao@126.com";
 
+	
 	@Autowired
 	private UserDao userDao;
 	

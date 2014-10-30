@@ -22,8 +22,8 @@ import com.walemao.megastore.util.StringMD5;
 
 @Controller
 @RequestMapping(value = "/safety")
-public class MSafetyController {
-	private Logger logger = LoggerFactory.getLogger(MSafetyController.class);
+public class SafetyController {
+	private Logger logger = LoggerFactory.getLogger(SafetyController.class);
 	
 	@Autowired
 	private MUserService mUserService;

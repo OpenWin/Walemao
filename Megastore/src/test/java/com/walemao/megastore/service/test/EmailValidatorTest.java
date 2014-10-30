@@ -2,7 +2,7 @@ package com.walemao.megastore.service.test;
 
 import org.junit.BeforeClass;
 
-import com.walemao.megastore.service.Validation.MEmailValidator;
+import com.walemao.megastore.service.Validation.EmailValidator;
 
 public class EmailValidatorTest {
 
