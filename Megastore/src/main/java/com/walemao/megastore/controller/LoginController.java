@@ -205,7 +205,12 @@ public class LoginController {
 		}
 		return "error";
 	}
-
+	
+	/**
+	 * 发送邮箱验证码
+	 * @param emailAddress
+	 * @return
+	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
 	public @ResponseBody String sendVericationCode(String emailAddress) {
 		int code = BaseUtil.random();

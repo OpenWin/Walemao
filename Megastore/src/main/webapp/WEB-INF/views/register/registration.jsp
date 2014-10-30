@@ -84,8 +84,9 @@ body {
 
 				<tr>
 					<td><b>*</b>邮箱：</td>
-					<td><form:input path="email" /></td>
-					<td></td>
+					<td><form:input id="email" path="email" /></td>
+					<td><input id="zemail" type="button" value=" 发送邮箱验证码 "
+						onClick="get_email_code();"></td>
 				</tr>
 
 				<tr>
@@ -96,7 +97,7 @@ body {
 				</tr>
 
 				<tr>
-					<td><b>*</b>短信验证码：</td>
+					<td><b>*</b>短信/邮箱验证码：</td>
 					<td><input type="text" name="authCode" /></td>
 					<td></td>
 				</tr>
@@ -117,6 +118,16 @@ body {
 </body>
 <%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
 <script type="text/javascript">
+	function get_email_code() {
+		$.post('<c:url value="/getEmCode" />', {
+			mobilephone : $('#email').val()
+		}, function(msg) {
+			alert(jQuery.trim(unescape(msg)));
+			if (msg == 'success') {
+				RemainTime();
+			}
+		});
+	};
 	function get_mobile_code() {
 		$.post('<c:url value="/getMpCode" />', {
 			mobilephone : $('#phone').val()
