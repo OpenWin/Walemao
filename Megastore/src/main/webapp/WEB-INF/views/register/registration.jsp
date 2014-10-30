@@ -118,7 +118,7 @@ body {
 <%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
 <script type="text/javascript">
 	function get_mobile_code() {
-		$.get('<c:url value="/getMpCode" />', {
+		$.post('<c:url value="/getMpCode" />', {
 			mobilephone : $('#phone').val()
 		}, function(msg) {
 			alert(jQuery.trim(unescape(msg)));

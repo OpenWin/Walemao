@@ -18,10 +18,10 @@ import com.walemao.megastore.repository.UserDao;
 import com.walemao.megastore.repository.UserDetailDao;
 import com.walemao.megastore.security.jdbc.UserAttemptsJdbcDaoImpl;
 import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
-import com.walemao.megastore.service.MUserService;
+import com.walemao.megastore.service.LoginService;
 
 @Service
-public class MUserServiceImpl implements MUserService {
+public class MUserServiceImpl implements LoginService {
 	private Logger logger = LoggerFactory.getLogger(MUserServiceImpl.class);
 
 	private static final String fromAddress = "walemao@126.com";

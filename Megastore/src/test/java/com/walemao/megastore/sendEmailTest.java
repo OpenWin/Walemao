@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-import com.walemao.megastore.service.MUserService;
+import com.walemao.megastore.service.LoginService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/megastore-bean-test.xml")
@@ -17,7 +17,7 @@ public class sendEmailTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
-	MUserService mUserService;
+	LoginService mUserService;
 
 	String add1 = "devildomelf@163.com";
 	String add2 = "walemao@126.com";

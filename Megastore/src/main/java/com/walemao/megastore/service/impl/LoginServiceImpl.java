@@ -18,15 +18,14 @@ import com.walemao.megastore.repository.UserDao;
 import com.walemao.megastore.repository.UserDetailDao;
 import com.walemao.megastore.security.jdbc.UserAttemptsJdbcDaoImpl;
 import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
-import com.walemao.megastore.service.MUserService;
+import com.walemao.megastore.service.LoginService;
 
 @Service
-public class LoginServiceImpl implements MUserService {
+public class LoginServiceImpl implements LoginService {
 	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
 	private static final String fromAddress = "walemao@126.com";
 
-	
 	@Autowired
 	private UserDao userDao;
 
@@ -116,16 +115,14 @@ public class LoginServiceImpl implements MUserService {
 	}
 
 	@Override
-	public void sendVerificationCode(String username, String emailAddress) {
+	public void sendVerificationCode(int code, String emailAddress) {
 		// TODO Auto-generated method stub
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setFrom(fromAddress);
-		message.setText(username);
+		message.setText("" + code);
 		message.setTo(emailAddress);
-		message.setSubject("ffffffffffffffffffff");
-		message.setSubject("Verification Code");
+		message.setSubject("哇乐猫——帐号验证码");
 		mailSender.send(message);
-
 	}
 
 	@Override
@@ -145,4 +142,5 @@ public class LoginServiceImpl implements MUserService {
 		// TODO Auto-generated method stub
 		return userAttemptsDao.CheckEmail(email);
 	}
+
 }
