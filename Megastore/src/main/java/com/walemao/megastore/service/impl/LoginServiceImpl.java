@@ -1,6 +1,7 @@
 package com.walemao.megastore.service.impl;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -21,16 +22,17 @@ import com.walemao.megastore.service.MUserService;
 
 @Service
 public class LoginServiceImpl implements MUserService {
+	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
 	private static final String fromAddress = "walemao@126.com";
 
 	
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private UserBaseDao userBaseDao;
-	
+
 	@Autowired
 	private UserDetailDao userDetailDao;
 
@@ -48,6 +50,7 @@ public class LoginServiceImpl implements MUserService {
 
 	@Override
 	public boolean insertUser(User user) {
+		logger.info("开始注册~~~~~~~");
 		if (userAttemptsDao.CheckUsername(user.getUsername())) {
 			return false;
 		}
@@ -57,15 +60,21 @@ public class LoginServiceImpl implements MUserService {
 				user.getPassword(), salt));
 		user.setSalt(salt);
 		userDao.insert(user);
-		
+
 		UserBase userBase = new UserBase();
 		userBase.setUsername(user.getUsername());
+		if (user.getMobilephone() != null) {
+			userBase.setIsval_mobilephone(true);
+		}
+		if (user.getEmail() != null) {
+			userBase.setIsval_email(true);
+		}
 		userBaseDao.insert(userBase);
-		
+
 		UserDetail userDetail = new UserDetail();
 		userDetail.setUsername(user.getUsername());
 		userDetailDao.insert(userDetail);
-		
+
 		UserAuthority author = new UserAuthority();
 		author.setUsername(user.getUsername());
 		author.setAuthority("ROLE_USER");
