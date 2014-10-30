@@ -4,7 +4,7 @@
 <!DOCTYPE HTML>
 <html lang="zh_CN">
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/plain" charset="UTF-8">
 <meta name="_csrf" content="${_csrf.token}" />
 <!-- default header name is X-CSRF-TOKEN -->
 <meta name="_csrf_header" content="${_csrf.headerName}" />
@@ -118,24 +118,22 @@ body {
 </body>
 <%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
 <script type="text/javascript">
-	function get_email_code() {
-		$.post('<c:url value="/getEmCode" />', {
-			mobilephone : $('#email').val()
+	
+	function get_mobile_code() {
+		$.post('<c:url value="/sendMpCode?${_csrf.parameterName}=${_csrf.token}" />', {
+			mobilephone : $('#phone').val()
 		}, function(msg) {
-			alert(jQuery.trim(unescape(msg)));
+			alert(jQuery.trim(msg));
 			if (msg == 'success') {
 				RemainTime();
 			}
 		});
 	};
-	function get_mobile_code() {
-		$.post('<c:url value="/getMpCode" />', {
-			mobilephone : $('#phone').val()
+	function get_email_code() {
+		$.post('<c:url value="/sendEmCode?${_csrf.parameterName}=${_csrf.token}" />', {
+			emailAddress : $('#email').val()
 		}, function(msg) {
-			alert(jQuery.trim(unescape(msg)));
-			if (msg == 'success') {
-				RemainTime();
-			}
+			alert(jQuery.trim(msg));
 		});
 	};
 	var iTime = 59;

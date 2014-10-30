@@ -37,8 +37,7 @@ import com.walemao.megastore.util.BaseUtil;
 
 @Controller
 public class LoginController {
-	private Logger logger = LoggerFactory
-			.getLogger(LoginController.class);
+	private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 	@Autowired
 	private LoginService mUserService;
@@ -149,9 +148,8 @@ public class LoginController {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return "redirect:/register";
 		}
-		
-		try
-		{
+
+		try {
 			mUserService.insertUser(user);
 			return "index";
 
@@ -205,14 +203,19 @@ public class LoginController {
 		}
 		return "error";
 	}
-	
+
 	/**
 	 * 发送邮箱验证码
+	 * 
 	 * @param emailAddress
 	 * @return
 	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
 	public @ResponseBody String sendVericationCode(String emailAddress) {
+		
+		if (!mUserService.getEmailExist(emailAddress)) {
+			return "邮箱已被注册过了，请更换其他邮箱！";
+		}
 		int code = BaseUtil.random();
 		try {
 			mUserService.sendVerificationCode(code, emailAddress);
@@ -233,6 +236,9 @@ public class LoginController {
 	@RequestMapping(value = "sendMpCode", method = RequestMethod.POST)
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
+		if (!mUserService.getMobilephoneExist(mobilephone)) {
+			return "手机已被注册过了，请更换其他手机！";
+		}
 		int code = BaseUtil.random();
 		logger.info("打印验证码：" + code);
 		request.getSession().setAttribute("code", code);
@@ -241,10 +247,10 @@ public class LoginController {
 		// Sms sms = new SmsWeimiImpl();
 		Map<String, Object> map;
 		try {
-//			map = sms.excute(code, mobilephone, 0);
-//			if (map.get("status").equals("success")) {
-//				return "success";
-//			}
+			// map = sms.excute(code, mobilephone, 0);
+			// if (map.get("status").equals("success")) {
+			// return "success";
+			// }
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
