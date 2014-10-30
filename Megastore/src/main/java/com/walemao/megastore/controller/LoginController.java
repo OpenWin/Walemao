@@ -26,9 +26,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ytx.org.apache.http.HttpResponse;
+
 import com.walemao.megastore.domain.User;
+import com.walemao.megastore.security.filter.LoginAuthenticationFilter;
 import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
+import com.walemao.megastore.security.util.XmlBeanSpringContextHelper;
 import com.walemao.megastore.service.LoginService;
 import com.walemao.megastore.service.Validation.RegisterValidator;
 import com.walemao.megastore.sms.Sms;
@@ -45,6 +49,18 @@ public class LoginController {
 
 	@Autowired
 	private RegisterValidator usernameValidator;
+	
+
+	private LoginAuthenticationFilter loginFilter;
+
+	public  LoginAuthenticationFilter getLoginFilter() 
+	{
+		if (loginFilter == null)
+		{
+			loginFilter = (LoginAuthenticationFilter)XmlBeanSpringContextHelper.getBean("loginAuthenticaionFilter");
+		}
+		return loginFilter;
+	}
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
@@ -135,7 +151,9 @@ public class LoginController {
 	public String processRegistration(
 			@RequestParam(required = false) String authCode,
 			@Validated @ModelAttribute("user") User user,
-			HttpServletRequest request, BindingResult result,
+			HttpServletRequest request, 
+			HttpServletResponse response,
+			BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			// return result.getFieldError().toString();
@@ -144,8 +162,8 @@ public class LoginController {
 			return "redirect:/register";
 		}
 		// 验证短信或邮箱验证码
-		if (!authCode.equals(request.getSession().getAttribute("code")
-				.toString())) {
+		Object codeAttri = request.getSession().getAttribute("code");
+		if (codeAttri != null && !authCode.equals(codeAttri.toString())) {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return "redirect:/register";
 		}
@@ -153,7 +171,8 @@ public class LoginController {
 		try
 		{
 			mUserService.insertUser(user);
-			return "index";
+			if (getLoginFilter().registToLoginFilter(request, response))
+				return "redirect:/index";
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
