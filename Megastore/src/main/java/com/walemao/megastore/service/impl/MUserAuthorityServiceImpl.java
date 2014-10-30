@@ -28,10 +28,10 @@ public class MUserAuthorityServiceImpl implements MUserService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private UserBaseDao userBaseDao;
-	
+
 	@Autowired
 	private UserDetailDao userDetailDao;
 
@@ -59,15 +59,21 @@ public class MUserAuthorityServiceImpl implements MUserService {
 				user.getPassword(), salt));
 		user.setSalt(salt);
 		userDao.insert(user);
-		
+
 		UserBase userBase = new UserBase();
 		userBase.setUsername(user.getUsername());
+		if (user.getMobilephone() != null) {
+			userBase.setIsval_mobilephone(true);
+		}
+		if (user.getEmail() != null) {
+			userBase.setIsval_email(true);
+		}
 		userBaseDao.insert(userBase);
-		
+
 		UserDetail userDetail = new UserDetail();
 		userDetail.setUsername(user.getUsername());
 		userDetailDao.insert(userDetail);
-		
+
 		UserAuthority author = new UserAuthority();
 		author.setUsername(user.getUsername());
 		author.setAuthority("ROLE_USER");

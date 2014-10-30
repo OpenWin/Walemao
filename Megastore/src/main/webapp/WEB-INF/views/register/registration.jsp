@@ -5,9 +5,9 @@
 <html lang="zh_CN">
 <head>
 <meta charset="UTF-8">
-<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf" content="${_csrf.token}" />
 <!-- default header name is X-CSRF-TOKEN -->
-<meta name="_csrf_header" content="${_csrf.headerName}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}" />
 <title>用户注册</title>
 <style type="text/css">
 body {
@@ -45,13 +45,13 @@ body {
 	margin: 15px 0px 0px;
 }
 
-#regForm table{
-    width: 100%;
-} 
+#regForm table {
+	width: 100%;
+}
 
-#regForm table td{
-    padding: 5px;
-} 
+#regForm table td {
+	padding: 5px;
+}
 </style>
 </head>
 <body>
@@ -90,23 +90,25 @@ body {
 
 				<tr>
 					<td><b>*</b>验证手机：</td>
-					<td><form:input path="mobilephone" /></td>
-					<td></td>
+					<td><form:input id="phone" path="mobilephone" /></td>
+					<td><input id="zphone" type="button" value=" 发送手机验证码 "
+						onClick="get_mobile_code();"></td>
 				</tr>
-				    
+
 				<tr>
-				    <td><b>*</b>短信验证码：</td>
+					<td><b>*</b>短信验证码：</td>
 					<td><input type="text" name="authCode" /></td>
 					<td></td>
 				</tr>
 
 				<tr>
-					<td align="right"><input id="thisCheckbox" name="thisCheckbox" checked="checked" type="checkbox" /></td>
+					<td align="right"><input id="thisCheckbox" name="thisCheckbox"
+						checked="checked" type="checkbox" /></td>
 					<td colspan="2">我已阅读并同意<a href="#">《哇乐猫用户注册协议》</a></td>
 				</tr>
-				
+
 				<tr>
-				   <td><input type="submit" value="立即注册" class="inputSubmit" /></td>
+					<td><input type="submit" value="立即注册" class="inputSubmit" /></td>
 				</tr>
 			</table>
 
@@ -115,6 +117,45 @@ body {
 </body>
 <%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
 <script type="text/javascript">
-	
+	function get_mobile_code() {
+		$.get('<c:url value="/getMpCode" />', {
+			mobilephone : $('#phone').val()
+		}, function(msg) {
+			alert(jQuery.trim(unescape(msg)));
+			if (msg == 'success') {
+				RemainTime();
+			}
+		});
+	};
+	var iTime = 59;
+	var Account;
+	function RemainTime() {
+		document.getElementById('zphone').disabled = true;
+		var iSecond, sSecond = "", sTime = "";
+		if (iTime >= 0) {
+			iSecond = parseInt(iTime % 60);
+			iMinute = parseInt(iTime / 60)
+			if (iSecond >= 0) {
+				if (iMinute > 0) {
+					sSecond = iMinute + "分" + iSecond + "秒";
+				} else {
+					sSecond = iSecond + "秒";
+				}
+			}
+			sTime = sSecond;
+			if (iTime == 0) {
+				clearTimeout(Account);
+				sTime = '获取手机验证码';
+				iTime = 59;
+				document.getElementById('zphone').disabled = false;
+			} else {
+				Account = setTimeout("RemainTime()", 1000);
+				iTime = iTime - 1;
+			}
+		} else {
+			sTime = '没有倒计时';
+		}
+		document.getElementById('zphone').value = sTime;
+	}
 </script>
 </html>

@@ -34,6 +34,7 @@ import com.walemao.megastore.service.Validation.MRegisterValidator;
 import com.walemao.megastore.sms.Sms;
 import com.walemao.megastore.sms.SmsIhuyiImpl;
 import com.walemao.megastore.sms.SmsWeimiImpl;
+import com.walemao.megastore.sms.SmsYuntongxunImpl;
 import com.walemao.megastore.util.BaseUtil;
 
 @Controller
@@ -140,23 +141,24 @@ public class MAuthenticationController {
 			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			// return result.getFieldError().toString();
-			redirectAttributes.addFlashAttribute("result", result.getAllErrors());
+			redirectAttributes.addFlashAttribute("result",
+					result.getAllErrors());
 			return "redirect:/register";
 		}
 		// 验证短信或邮箱验证码
-		if (authCode == null) {
+		if (!authCode.equals(request.getSession().getAttribute("code").toString())) {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return "redirect:/register";
 		}
-		try{
+		try {
 			mUserService.insertUser(user);
-			return "registration success";
-			
-		}catch(Exception e){
+			return "index";
+
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		redirectAttributes.addFlashAttribute("erroCode", "注册失败！");
 		return "redirect:/register";
 	}
@@ -220,10 +222,11 @@ public class MAuthenticationController {
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
 		int code = BaseUtil.random();
+		logger.info("打印验证码：" + code);
 		request.getSession().setAttribute("code", code);
 		// 接口切换 SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
-		// Sms sms = new SmsIhuyiImpl();
-		Sms sms = new SmsWeimiImpl();
+		Sms sms = new SmsYuntongxunImpl();
+		// Sms sms = new SmsWeimiImpl();
 		Map<String, Object> map;
 		try {
 			map = sms.excute(code, mobilephone, 0);
