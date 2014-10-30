@@ -29,11 +29,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
-import com.walemao.megastore.service.MUserService;
+import com.walemao.megastore.service.LoginService;
 import com.walemao.megastore.service.Validation.RegisterValidator;
 import com.walemao.megastore.sms.Sms;
-import com.walemao.megastore.sms.SmsIhuyiImpl;
-import com.walemao.megastore.sms.SmsWeimiImpl;
 import com.walemao.megastore.sms.SmsYuntongxunImpl;
 import com.walemao.megastore.util.BaseUtil;
 
@@ -43,7 +41,7 @@ public class LoginController {
 			.getLogger(LoginController.class);
 
 	@Autowired
-	private MUserService mUserService;
+	private LoginService mUserService;
 
 	@Autowired
 	private RegisterValidator usernameValidator;

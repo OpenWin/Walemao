@@ -2,7 +2,7 @@ package com.walemao.megastore.service;
 
 import com.walemao.megastore.domain.User;
 
-public interface MUserService {
+public interface LoginService {
 	/**
 	 * 根据手机号码或邮箱获取用户名
 	 * 

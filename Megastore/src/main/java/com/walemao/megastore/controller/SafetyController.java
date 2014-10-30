@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.security.provider.RandomValidateCode;
-import com.walemao.megastore.service.MUserService;
+import com.walemao.megastore.service.LoginService;
 import com.walemao.megastore.util.BaseUtil;
 import com.walemao.megastore.util.StringMD5;
 
@@ -26,7 +26,7 @@ public class SafetyController {
 	private Logger logger = LoggerFactory.getLogger(SafetyController.class);
 	
 	@Autowired
-	private MUserService mUserService;
+	private LoginService mUserService;
 	
 	/**
 	 * 获取修改密码页面
