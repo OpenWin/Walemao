@@ -146,7 +146,8 @@ public class MAuthenticationController {
 			return "redirect:/register";
 		}
 		// 验证短信或邮箱验证码
-		if (!authCode.equals(request.getSession().getAttribute("code").toString())) {
+		if (!authCode.equals(request.getSession().getAttribute("code")
+				.toString())) {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return "redirect:/register";
 		}
@@ -205,10 +206,16 @@ public class MAuthenticationController {
 		return "error";
 	}
 
-	@RequestMapping(value = "verification", method = RequestMethod.POST)
+	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
 	public @ResponseBody String sendVericationCode(String emailAddress) {
-		mUserService.sendVerificationCode("username", emailAddress);
-		return "";
+		int code = BaseUtil.random();
+		try {
+			mUserService.sendVerificationCode(code, emailAddress);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "error";
 	}
 
 	/**
@@ -218,7 +225,7 @@ public class MAuthenticationController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "getMpCode", method = RequestMethod.GET)
+	@RequestMapping(value = "sendMpCode", method = RequestMethod.POST)
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
 		int code = BaseUtil.random();
@@ -229,10 +236,11 @@ public class MAuthenticationController {
 		// Sms sms = new SmsWeimiImpl();
 		Map<String, Object> map;
 		try {
-			map = sms.excute(code, mobilephone, 0);
-			if (map.get("status").equals("success")) {
-				return "success";
-			}
+//			map = sms.excute(code, mobilephone, 0);
+//			if (map.get("status").equals("success")) {
+//				return "success";
+//			}
+			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
