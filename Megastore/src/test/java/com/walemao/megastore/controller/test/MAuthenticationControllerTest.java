@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.walemao.megastore.controller.MAuthenticationController;
+import com.walemao.megastore.controller.LoginController;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -29,7 +29,7 @@ public class MAuthenticationControllerTest {
 	@Before
 	public void step() {
 		this.mockMvc = MockMvcBuilders.standaloneSetup(
-				new MAuthenticationController()).build();
+				new LoginController()).build();
 	}
 
 	@Test

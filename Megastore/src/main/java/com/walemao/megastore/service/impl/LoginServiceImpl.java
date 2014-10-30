@@ -21,11 +21,12 @@ import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
 import com.walemao.megastore.service.MUserService;
 
 @Service
-public class MUserAuthorityServiceImpl implements MUserService {
-	private Logger logger = LoggerFactory.getLogger(MUserAuthorityServiceImpl.class);
+public class LoginServiceImpl implements MUserService {
+	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
 	private static final String fromAddress = "walemao@126.com";
 
+	
 	@Autowired
 	private UserDao userDao;
 
