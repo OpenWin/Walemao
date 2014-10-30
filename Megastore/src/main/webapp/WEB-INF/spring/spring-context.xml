@@ -15,8 +15,8 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
@@ -99,16 +99,36 @@
 		</property>
 	</bean>
 
-
+    <context:component-scan base-package="com.walemao.megastore">
+       <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
     
-	<aop:aspectj-autoproxy />
-	<bean id="dynamicDataSourceAop" class="com.walemao.megastore.aop.DynamicDataSourceAdvice" />
+    <!-- AOP Aspect -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<bean id="chooserDataSourceAspect" class="com.walemao.megastore.repository.datasource.ChooseDataSourceAspect" />
 
-<!-- 	<aop:config> -->
-<!-- 		<aop:pointcut id="transactionPointCut" -->
-<!-- 			expression="execution(* com.walemao.megastore.service.impl.*.*(..))" /> -->
-<!-- 		<aop:advisor pointcut-ref="transactionPointCut" -->
-<!-- 			advice-ref="txAdvice" /> -->
-<!-- 	</aop:config> -->
+    <!-- 定义事务管理 -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceW" />
+	</bean>	
+	<!-- 定义事务传播属性 -->
+	<tx:annotation-driven transaction-manager="txManager" />
+	<!-- 事务建议 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<!-- 事务语义 -->
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED"/>
+			<tx:method name="update*" propagation="REQUIRED"/>
+			<tx:method name="delete*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+    <!-- AOP TX -->
+	<aop:config>
+		<aop:pointcut id="transactionPointCut"
+			expression="execution(* com.walemao.megastore.service.impl.*.*(..))" />
+		<aop:advisor pointcut-ref="transactionPointCut"
+			advice-ref="txAdvice" />
+	</aop:config>
 
 </beans>

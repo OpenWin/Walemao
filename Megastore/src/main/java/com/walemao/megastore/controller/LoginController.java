@@ -144,11 +144,11 @@ public class LoginController {
 			return "redirect:/register";
 		}
 		// 验证短信或邮箱验证码
-		if (!authCode.equals(request.getSession().getAttribute("code")
-				.toString())) {
-			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
-			return "redirect:/register";
-		}
+//		if (!authCode.equals(request.getSession().getAttribute("code")
+//				.toString())) {
+//			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
+//			return "redirect:/register";
+//		}
 		
 		try
 		{
