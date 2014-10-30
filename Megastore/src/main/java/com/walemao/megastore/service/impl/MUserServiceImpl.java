@@ -21,8 +21,8 @@ import com.walemao.megastore.security.provider.UsernameAuthenticatonProvider;
 import com.walemao.megastore.service.LoginService;
 
 @Service
-public class LoginServiceImpl implements LoginService {
-	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+public class MUserServiceImpl implements LoginService {
+	private Logger logger = LoggerFactory.getLogger(MUserServiceImpl.class);
 
 	private static final String fromAddress = "walemao@126.com";
 
@@ -119,9 +119,9 @@ public class LoginServiceImpl implements LoginService {
 		// TODO Auto-generated method stub
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setFrom(fromAddress);
-		message.setText("" + code);
+		message.setText("	亲爱的用户：您好！您的注册验证码是：" + code + "!");
 		message.setTo(emailAddress);
-		message.setSubject("哇乐猫——帐号验证码");
+		message.setSubject("哇乐猫-帐号邮箱验证");
 		mailSender.send(message);
 	}
 

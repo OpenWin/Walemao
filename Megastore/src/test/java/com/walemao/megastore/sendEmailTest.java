@@ -26,7 +26,7 @@ public class sendEmailTest extends
 	public void Test() {
 		String emailAddress = "devildomelf@163.com";
 		String username = "ffffffff";
-		mUserService.sendVerificationCode(username, emailAddress);
+		//mUserService.sendVerificationCode(username, emailAddress);
 		System.out.print("send mail");
 	}
 }

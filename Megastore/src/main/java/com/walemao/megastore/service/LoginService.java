@@ -24,7 +24,7 @@ public interface LoginService {
 	public boolean updatePassword(String username, String oldRawPassword,
 			String newRawPassword);
 
-	public void sendVerificationCode(String usernmae, String emailAddress);
+	public void sendVerificationCode(int code, String emailAddress);
 
 	/**
 	 * 根据用户名获取用户信息
