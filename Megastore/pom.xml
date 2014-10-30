@@ -11,7 +11,6 @@
 		<java-version>1.6</java-version>
 		<org.springframework-version>4.1.1.RELEASE</org.springframework-version>
 		<org.springframework.security-version>3.2.5.RELEASE</org.springframework.security-version>
-		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
 	<url>https://repository.sonatype.org/content/groups/forge/com/google/code/kaptcha/kaptcha/2.3/</url>
@@ -174,13 +173,13 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>${org.aspectj-version}</version>
+			<version>1.6.11</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.7.4</version>
+			<version>1.6.11</version>
 		</dependency>
 
 		<!-- Gson -->
@@ -324,14 +323,6 @@
 					<compilerArgument>-Xlint:all</compilerArgument>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<configuration>
-					<mainClass>org.test.int1.Main</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
