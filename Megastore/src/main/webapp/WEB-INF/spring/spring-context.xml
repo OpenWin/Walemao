@@ -40,7 +40,7 @@
 		<property name="connectionTimeoutInMs" value="5000" />
 		<property name="closeConnectionWatchTimeoutInMs" value="1000" />
 	</bean>
-	
+
 	<bean id="dataSourceWrite" class="com.jolbox.bonecp.BoneCPDataSource"
 		destroy-method="close">
 		<property name="driverClass" value="${jdbc.driver}" />
@@ -61,12 +61,13 @@
 	<bean id="dataSourceR" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
 		<constructor-arg ref="dataSourceRead" />
 	</bean>
-	
+
 	<bean id="dataSourceW" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
 		<constructor-arg ref="dataSourceWrite" />
 	</bean>
 
-	<bean id="dynamicDataSource" class="com.walemao.megastore.repository.datasource.DynamicDataSource">
+	<bean id="dynamicDataSource"
+		class="com.walemao.megastore.repository.datasource.DynamicDataSource">
 		<!-- 通过key-value的形式来关联数据源 -->
 		<property name="targetDataSources">
 			<map key-type="java.lang.String">
@@ -83,9 +84,9 @@
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<property name="dataSource" ref="dynamicDataSource" />
 	</bean>
-	
+
 	<!-- email -->
-	<bean id = "mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.126.com"></property>
 		<property name="port" value="25"></property>
 		<property name="username" value="walemao@126.com"></property>
@@ -98,32 +99,16 @@
 		</property>
 	</bean>
 
-	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSourceW" />
-	</bean>
-	<!-- 定义事务传播属性 -->
-	<tx:annotation-driven transaction-manager="txManager" />
-	<!-- 事务建议 -->
-	<tx:advice id="txAdvice" transaction-manager="txManager">
-		<!-- 事务语义 -->
-		<tx:attributes>
-			<tx:method name="insert*" propagation="REQUIRED"/>
-			<tx:method name="update*" propagation="REQUIRED"/>
-			<tx:method name="delete*" propagation="REQUIRED"/>
-			<tx:method name="register*" propagation="REQUIRED"/>
-			<tx:method name="change*" propagation="REQUIRED"/>
-		</tx:attributes>
-	</tx:advice>
 
-	<aop:config>
-		<aop:pointcut id="transactionPointCut"
-			expression="execution(* com.walemao.megastore.service.impl.*.*(..))" />
-		<aop:advisor pointcut-ref="transactionPointCut"
-			advice-ref="txAdvice" />
-	</aop:config>
-	
+    
 	<aop:aspectj-autoproxy />
-    <bean id="dynamicDataSourceAop" class="com.walemao.megastore.aop.DynamicDataSourceAdvice" />
-	
+	<bean id="dynamicDataSourceAop" class="com.walemao.megastore.aop.DynamicDataSourceAdvice" />
+
+<!-- 	<aop:config> -->
+<!-- 		<aop:pointcut id="transactionPointCut" -->
+<!-- 			expression="execution(* com.walemao.megastore.service.impl.*.*(..))" /> -->
+<!-- 		<aop:advisor pointcut-ref="transactionPointCut" -->
+<!-- 			advice-ref="txAdvice" /> -->
+<!-- 	</aop:config> -->
+
 </beans>

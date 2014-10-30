@@ -1,5 +1,7 @@
 package com.walemao.megastore.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -20,6 +22,7 @@ import com.walemao.megastore.service.MUserService;
 
 @Service
 public class MUserAuthorityServiceImpl implements MUserService {
+	private Logger logger = LoggerFactory.getLogger(MUserAuthorityServiceImpl.class);
 
 	private static final String fromAddress = "walemao@126.com";
 
@@ -46,6 +49,7 @@ public class MUserAuthorityServiceImpl implements MUserService {
 
 	@Override
 	public boolean insertUser(User user) {
+		logger.info("开始注册~~~~~~~");
 		if (userAttemptsDao.CheckUsername(user.getUsername())) {
 			return false;
 		}
