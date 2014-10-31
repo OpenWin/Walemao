@@ -1,6 +1,7 @@
 package com.walemao.megastore.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -49,15 +50,13 @@ public class LoginController {
 
 	@Autowired
 	private RegisterValidator usernameValidator;
-	
 
 	private LoginAuthenticationFilter loginFilter;
 
-	public  LoginAuthenticationFilter getLoginFilter() 
-	{
-		if (loginFilter == null)
-		{
-			loginFilter = (LoginAuthenticationFilter)XmlBeanSpringContextHelper.getBean("loginAuthenticaionFilter");
+	public LoginAuthenticationFilter getLoginFilter() {
+		if (loginFilter == null) {
+			loginFilter = (LoginAuthenticationFilter) XmlBeanSpringContextHelper
+					.getBean("loginAuthenticaionFilter");
 		}
 		return loginFilter;
 	}
@@ -151,14 +150,12 @@ public class LoginController {
 	public String processRegistration(
 			@RequestParam(required = false) String authCode,
 			@Validated @ModelAttribute("user") User user,
-			HttpServletRequest request, 
-			HttpServletResponse response,
-			BindingResult result,
-			RedirectAttributes redirectAttributes) {
-		
+			HttpServletRequest request, HttpServletResponse response,
+			BindingResult result, RedirectAttributes redirectAttributes) {
+
 		String errorRedirectUrl = "redirect:/register";
 		String successRedirectUrl = "redirect:/index";
-		
+
 		if (result.hasErrors()) {
 			// return result.getFieldError().toString();
 			redirectAttributes.addFlashAttribute("result",
@@ -171,15 +168,12 @@ public class LoginController {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return errorRedirectUrl;
 		}
-		
-		try
-		{
-			if (!mUserService.insertUser(user))
-			{
+
+		try {
+			if (!mUserService.insertUser(user)) {
 				redirectAttributes.addFlashAttribute("erroCode", "用户已存在");
 				return errorRedirectUrl;
-			}
-			else if (getLoginFilter().registToLoginFilter(request, response))
+			} else if (getLoginFilter().registToLoginFilter(request, response))
 				return successRedirectUrl;
 
 		} catch (Exception e) {
@@ -238,22 +232,24 @@ public class LoginController {
 	 * 
 	 * @param emailAddress
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
-	public @ResponseBody String sendVericationCode(String emailAddress) throws UnsupportedEncodingException {
-		
+	public @ResponseBody String sendVericationCode(String emailAddress,
+			HttpServletResponse response) throws UnsupportedEncodingException {
+		response.setCharacterEncoding("utf-8");
+
 		if (mUserService.getEmailExist(emailAddress)) {
-			return "邮箱已被注册过了，请更换其他邮箱！";
+			return "邮箱已被注册过了，请更换其他邮箱！".toString();
 		}
 		int code = BaseUtil.random();
 		try {
 			mUserService.sendVerificationCode(code, emailAddress);
-			return "success";
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "error";
+		return null;
 	}
 
 	/**

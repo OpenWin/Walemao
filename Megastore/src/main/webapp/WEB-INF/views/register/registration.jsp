@@ -129,13 +129,15 @@ body {
 			}
 		});
 	};
+	
 	function get_email_code() {
 		$.post('<c:url value="/sendEmCode?${_csrf.parameterName}=${_csrf.token}" />', {
 			emailAddress : $('#email').val()
 		}, function(msg) {
-			alert(jQuery.trim(msg));
+			alert(msg);
 		});
 	};
+	
 	var iTime = 59;
 	var Account;
 	function RemainTime() {
@@ -143,7 +145,7 @@ body {
 		var iSecond, sSecond = "", sTime = "";
 		if (iTime >= 0) {
 			iSecond = parseInt(iTime % 60);
-			iMinute = parseInt(iTime / 60)
+			iMinute = parseInt(iTime / 60);
 			if (iSecond >= 0) {
 				if (iMinute > 0) {
 					sSecond = iMinute + "分" + iSecond + "秒";

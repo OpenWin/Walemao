@@ -11,6 +11,31 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
+	<beans:bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<beans:property name="messageConverters">
+			<beans:list>
+				<beans:bean
+					class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+				<beans:bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<beans:property name="supportedMediaTypes">
+						<beans:list>
+							<beans:value>text/plain;charset=UTF-8</beans:value>
+						</beans:list>
+					</beans:property>
+				</beans:bean>
+				<beans:bean
+					class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+				<beans:bean
+					class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+				<beans:bean
+					class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+				<beans:bean
+					class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
 
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven />
@@ -27,25 +52,6 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 
-	<beans:bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<beans:property name="messageConverters">
-			<beans:list>
-				<beans:bean
-					class="org.springframework.http.converter.StringHttpMessageConverter">
-					<beans:property name="supportedMediaTypes">
-						<beans:list>
-							<beans:bean class="org.springframework.http.MediaType">
-								<beans:constructor-arg index="0" value="text" />
-								<beans:constructor-arg index="1" value="plain" />
-								<beans:constructor-arg index="2" value="UTF-8" />
-							</beans:bean>
-						</beans:list>
-					</beans:property>
-				</beans:bean>
-			</beans:list>
-		</beans:property>
-	</beans:bean>
 
 	<!-- 文件上传配置 -->
 	<beans:bean id="multipartResolver"
