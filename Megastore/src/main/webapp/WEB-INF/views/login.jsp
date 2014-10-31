@@ -118,10 +118,6 @@ body {
 	<div class="socket"></div>
 </body>
 <%@ include file="/WEB-INF/views/includes/foot_scripts_links.jspf"%>
-<script type="text/javascript"
-	src="<c:url value="/resources/js/sockjs.min.js"/>"></script>
-<script type="text/javascript"
-	src="<c:url value="/resources/js/stomp.js"/>"></script>
 <script type="text/javascript">
 	$('#kaptchaImage').click(function() {
 		abc();
@@ -134,19 +130,5 @@ body {
 				.fadeIn();
 	}
 
-	/** WebSocket通信 **/
-	var socket = new SockJS('<c:url value="/notice/entry"/> ');
-	var stompClient = Stomp.over(socket);
-	var stompClient = Stomp.over(socket);
-	var connectCallback = function() {
-		console.log("完成服务器的链接！");
-		stompClient.subscribe('/topic/notice/exit', function(data) {
-			$('.socket').append('<p>订阅的消息： ' + data + '</p>');
-		});
-	};
-
-	var errorCallback = function(error) {
-		console.log("发生错误：" + error.headers.message);
-	};
 </script>
 </html>
