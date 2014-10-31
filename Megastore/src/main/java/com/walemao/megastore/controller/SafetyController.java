@@ -24,12 +24,13 @@ import com.walemao.megastore.util.StringMD5;
 @RequestMapping(value = "/safety")
 public class SafetyController {
 	private Logger logger = LoggerFactory.getLogger(SafetyController.class);
-	
+
 	@Autowired
 	private LoginService mUserService;
-	
+
 	/**
 	 * 获取修改密码页面
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/modify/pwd", method = RequestMethod.GET)
@@ -39,6 +40,7 @@ public class SafetyController {
 
 	/**
 	 * 修改密码
+	 * 
 	 * @param password
 	 * @param newPassword
 	 * @return
@@ -90,21 +92,24 @@ public class SafetyController {
 			HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
 		String message = "";
+		logger.info("s333 " + name);
 		try {
-			if (RandomValidateCode.isCodeRight(request)) {
+			if (!RandomValidateCode.isCodeRight(request)) {
+				logger.info("s111 " + name);
 				message = "验证码错误";
 				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
-				return "redirect:/findPwd/index";
+				return "redirect:/safety/findPwd";
 			}
+			logger.info("s222 " + name);
 			if (name == null || name.length() <= 0
 					|| name.equals("用户名/邮箱/已验证手机")) {
 				message = "请填写您的用户名/邮箱/已验证手机";
 				redirectAttributes.addFlashAttribute("nameMsg", message);
-				return "redirect:/findPwd/index";
+				return "redirect:/safety/findPwd";
 			} else if (j_captcha == null || j_captcha.length() <= 0) {
 				message = "请输入验证码";
 				redirectAttributes.addFlashAttribute("kaptchaMsg", message);
-				return "redirect:/safe/findPwd";
+				return "redirect:safe/findPwd";
 			} else {
 				String username = name;
 				if (BaseUtil.isEmail(name)) {
@@ -120,7 +125,7 @@ public class SafetyController {
 				if (user == null) {
 					message = "您输入的账户名不存在，请核对后重新输入。";
 					redirectAttributes.addFlashAttribute("nameMsg", message);
-					return "redirect:/findPwd/index";
+					return "redirect:/safety/findPwd";
 				}
 				if (user.getEmail() != null && !user.getEmail().equals("")) {
 					request.setAttribute("encryptemail",

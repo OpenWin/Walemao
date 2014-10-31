@@ -128,6 +128,7 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public User getUser(String username) {
 		// TODO Auto-generated method stub
+		logger.info("sbbbbbbbbbbbbbbbbbbbb "+username);
 		return userDao.getUser(username);
 	}
 

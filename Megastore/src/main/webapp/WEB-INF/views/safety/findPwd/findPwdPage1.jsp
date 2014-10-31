@@ -5,6 +5,7 @@
 <html lang="zh_CN">
 <head>
 <meta charset="UTF-8">
+<meta name="_csrf" content="${_csrf.token}" />
 <title>找回密码</title>
 <style type="text/css">
 body {
@@ -51,7 +52,7 @@ body {
 </style>
 </head>
 <body>
-	<c:url var="commitUrl" value="../findPwd/findPwd" />
+	<c:url var="commitUrl" value="/safety/findPwd/validation?${_csrf.parameterName}=${_csrf.token}" />
 	<form:form action="${commitUrl}" method="POST"
 		id="findPasswordVerificationForm">
 
