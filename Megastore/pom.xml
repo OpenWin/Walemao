@@ -145,6 +145,22 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Megastore-JMS -->
+		<dependency>
+			<groupId>com.walemao</groupId>
+			<artifactId>Megastore-JMS</artifactId>
+			<version>1.0.0-BUILD-SNAPSHOT</version>
+			<type>war</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.walemao</groupId>
+			<artifactId>Megastore-JMS</artifactId>
+			<version>1.0.0-BUILD-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- MySql -->
 		<dependency>
