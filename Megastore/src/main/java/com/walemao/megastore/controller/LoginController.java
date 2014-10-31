@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.Destination;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,6 +39,7 @@ import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.security.util.XmlBeanSpringContextHelper;
 import com.walemao.megastore.service.LoginService;
 import com.walemao.megastore.service.Validation.RegisterValidator;
+import com.walemao.megastore.service.jms.JmsPushTest;
 import com.walemao.megastore.sms.Sms;
 import com.walemao.megastore.sms.SmsYuntongxunImpl;
 import com.walemao.megastore.util.BaseUtil;
@@ -50,6 +53,12 @@ public class LoginController {
 
 	@Autowired
 	private RegisterValidator usernameValidator;
+	
+	@Autowired  
+    private JmsPushTest jmsPushTest;
+    @Autowired  
+    @Qualifier("queueDestination")  
+    private Destination destination; 
 
 	private LoginAuthenticationFilter loginFilter;
 
@@ -92,6 +101,9 @@ public class LoginController {
 			@CookieValue(value = "_plt", required = false) String pltCookie,
 			HttpServletRequest request) {
 		LoginAttributeJudge.RedirectSessionAttribute(request);
+		
+		jmsPushTest.pushMessage(destination, "Hello World!");
+		
 		request.setAttribute("username", pltCookie);
 		return "login";
 	}

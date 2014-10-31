@@ -40,7 +40,7 @@
 	</listener>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/spring/spring-context.xml, /WEB-INF/spring/spring-security.xml, /WEB-INF/spring/spring-jms.xml</param-value>
+		<param-value>/WEB-INF/spring/spring-security.xml, /WEB-INF/spring/spring-jms.xml, /WEB-INF/spring/spring-context.xml</param-value>
 	</context-param>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
