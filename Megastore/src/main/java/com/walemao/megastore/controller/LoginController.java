@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.Destination;
+import javax.jms.TextMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +59,11 @@ public class LoginController {
     private JmsPushTest jmsPushTest;
     @Autowired  
     @Qualifier("queueDestination")  
-    private Destination destination; 
+    private Destination destination;
+    
+    @Autowired
+    @Qualifier("topicDestination")
+    private Destination topicDestination;
 
 	private LoginAuthenticationFilter loginFilter;
 
@@ -148,6 +153,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String getRegistrationPage(@ModelAttribute("user") User user) {
+		jmsPushTest.pushMessage(topicDestination, "Topic message...");
 		return "/register/registration";
 	}
 
