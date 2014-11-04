@@ -54,16 +54,16 @@ public class LoginController {
 
 	@Autowired
 	private RegisterValidator usernameValidator;
-	
-	@Autowired  
-    private JmsPushTest jmsPushTest;
-    @Autowired  
-    @Qualifier("queueDestination")  
-    private Destination destination;
-    
-    @Autowired
-    @Qualifier("topicDestination")
-    private Destination topicDestination;
+
+	@Autowired
+	private JmsPushTest jmsPushTest;
+	@Autowired
+	@Qualifier("queueDestination")
+	private Destination destination;
+
+	@Autowired
+	@Qualifier("topicDestination")
+	private Destination topicDestination;
 
 	private LoginAuthenticationFilter loginFilter;
 
@@ -106,9 +106,9 @@ public class LoginController {
 			@CookieValue(value = "_plt", required = false) String pltCookie,
 			HttpServletRequest request) {
 		LoginAttributeJudge.RedirectSessionAttribute(request);
-		
+
 		//jmsPushTest.pushMessage(destination, "Hello World!");
-		
+
 		request.setAttribute("username", pltCookie);
 		return "login";
 	}
@@ -182,7 +182,10 @@ public class LoginController {
 		}
 		// 验证短信或邮箱验证码
 		Object codeAttri = request.getSession().getAttribute("code");
-		if (codeAttri != null && !authCode.equals(codeAttri.toString())) {
+		if (authCode == null || authCode.equals("")) {
+			redirectAttributes.addFlashAttribute("erroCode", "请填写验证码");
+			return errorRedirectUrl;
+		} else if (!authCode.equals(codeAttri.toString())) {
 			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
 			return errorRedirectUrl;
 		}
