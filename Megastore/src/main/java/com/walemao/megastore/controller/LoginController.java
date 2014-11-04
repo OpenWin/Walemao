@@ -50,6 +50,9 @@ public class LoginController {
 	private Logger logger = LoggerFactory.getLogger(LoginController.class);
 	
 	private final static String VERIFY_CODE_ATT = "VERIFY_CODE_ATT";
+	private final static String USERNAME_ATT = "username";
+	private final static String ERROR_CODE_ATT = "erroCode";
+	private final static String IS_LOGIN_ATT = "islogin";
 	private final static String USERNAME_EXIST = "用户已存在";
 	private final static String REGISTER_FAILED = "注册失败";
 	private final static String REGISTER_SUCCESSED = "注册成功";
@@ -57,7 +60,7 @@ public class LoginController {
 	private final static String PHONE_EXIST = "手机已被注册过了，请更换其他手机！";
 	private final static String SEND_VERIFY_CODE = "已发送验证码";
 	private final static String INTERNAL_ERROR = "系统内部错误";
-
+	
 	@Autowired
 	private LoginService mUserService;
 
@@ -116,7 +119,7 @@ public class LoginController {
 
 		//jmsPushTest.pushMessage(destination, "Hello World!");
 
-		request.setAttribute("username", pltCookie);
+		request.setAttribute(USERNAME_ATT, pltCookie);
 		return "login";
 	}
 
@@ -142,13 +145,13 @@ public class LoginController {
 				Cookie foo = new Cookie("_pst", user.getUsername());
 				foo.setMaxAge(1209600);
 				response.addCookie(foo);
-				request.setAttribute("islogin", 1);
-				request.setAttribute("username", user.getUsername());
+				request.setAttribute(IS_LOGIN_ATT, 1);
+				request.setAttribute(USERNAME_ATT, user.getUsername());
 				return "index";
 			}
 		}
 
-		request.setAttribute("username", pstCookie);
+		request.setAttribute(USERNAME_ATT, pstCookie);
 		return "index";
 	}
 
@@ -192,7 +195,7 @@ public class LoginController {
 				authCode, resultMsg))
 		{
 			System.out.println(resultMsg.getError());
-			redirectAttributes.addFlashAttribute("erroCode", resultMsg.getError());
+			redirectAttributes.addFlashAttribute(ERROR_CODE_ATT, resultMsg.getError());
 			return errorRedirectUrl;
 		}
 
@@ -200,7 +203,7 @@ public class LoginController {
 		{
 			if (!mUserService.insertUser(user)) 
 			{
-				redirectAttributes.addFlashAttribute("erroCode", USERNAME_EXIST);
+				redirectAttributes.addFlashAttribute(ERROR_CODE_ATT, USERNAME_EXIST);
 				return errorRedirectUrl;
 			} 
 			else if (getLoginFilter().registToLoginFilter(request, response))
@@ -215,7 +218,7 @@ public class LoginController {
 			e.printStackTrace();
 		}
 
-		redirectAttributes.addFlashAttribute("erroCode", REGISTER_FAILED);
+		redirectAttributes.addFlashAttribute(ERROR_CODE_ATT, REGISTER_FAILED);
 		return errorRedirectUrl;
 	}
 
