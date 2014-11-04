@@ -107,7 +107,7 @@ public class LoginController {
 			HttpServletRequest request) {
 		LoginAttributeJudge.RedirectSessionAttribute(request);
 		
-		jmsPushTest.pushMessage(destination, "Hello World!");
+		//jmsPushTest.pushMessage(destination, "Hello World!");
 		
 		request.setAttribute("username", pltCookie);
 		return "login";
@@ -153,7 +153,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String getRegistrationPage(@ModelAttribute("user") User user) {
-		jmsPushTest.pushMessage(topicDestination, "Topic message...");
+		//jmsPushTest.pushMessage(topicDestination, "Topic message...");
 		return "/register/registration";
 	}
 
@@ -253,7 +253,7 @@ public class LoginController {
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
-	public @ResponseBody String sendVericationCode(String emailAddress,
+	public @ResponseBody String sendVericationCode(String emailAddress,HttpServletRequest request,
 			HttpServletResponse response) throws UnsupportedEncodingException {
 		response.setCharacterEncoding("utf-8");
 
@@ -261,13 +261,16 @@ public class LoginController {
 			return "邮箱已被注册过了，请更换其他邮箱！".toString();
 		}
 		int code = BaseUtil.random();
-		try {
+		
+		try 
+		{
 			mUserService.sendVerificationCode(code, emailAddress);
-			return null;
+			request.getSession().setAttribute("code", code);
+			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return "error";
 	}
 
 	/**
