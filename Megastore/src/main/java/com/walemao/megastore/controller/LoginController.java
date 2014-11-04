@@ -39,21 +39,23 @@ import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.security.util.XmlBeanSpringContextHelper;
 import com.walemao.megastore.service.LoginService;
-import com.walemao.megastore.service.Validation.RegisterValidator;
+import com.walemao.megastore.service.Validation.RegisterFormValidator;
+import com.walemao.megastore.service.Validation.RegisterFormValidatorImpl;
 import com.walemao.megastore.service.jms.JmsPushTest;
-import com.walemao.megastore.sms.Sms;
-import com.walemao.megastore.sms.SmsYuntongxunImpl;
 import com.walemao.megastore.util.BaseUtil;
+import com.walemao.megastore.util.ErrorParamOut;
 
 @Controller
 public class LoginController {
 	private Logger logger = LoggerFactory.getLogger(LoginController.class);
+	
+	private final static String VERIFY_CODE_ATT = "VERIFY_CODE_ATT";
 
 	@Autowired
 	private LoginService mUserService;
 
 	@Autowired
-	private RegisterValidator usernameValidator;
+	private RegisterFormValidatorImpl usernameValidator;
 
 	@Autowired
 	private JmsPushTest jmsPushTest;
@@ -64,6 +66,9 @@ public class LoginController {
 	@Autowired
 	@Qualifier("topicDestination")
 	private Destination topicDestination;
+	
+	@Autowired
+	private RegisterFormValidator registerValidator;
 
 	private LoginAuthenticationFilter loginFilter;
 
@@ -73,11 +78,6 @@ public class LoginController {
 					.getBean("loginAuthenticaionFilter");
 		}
 		return loginFilter;
-	}
-
-	@InitBinder
-	protected void initBinder(WebDataBinder binder) {
-		binder.setValidator(usernameValidator);
 	}
 
 	/**
@@ -181,23 +181,36 @@ public class LoginController {
 			return errorRedirectUrl;
 		}
 		// 验证短信或邮箱验证码
-		Object codeAttri = request.getSession().getAttribute("code");
-		if (authCode == null || authCode.equals("")) {
-			redirectAttributes.addFlashAttribute("erroCode", "请填写验证码");
-			return errorRedirectUrl;
-		} else if (!authCode.equals(codeAttri.toString())) {
-			redirectAttributes.addFlashAttribute("erroCode", "验证码错误");
+		Object codeAttri = request.getSession().getAttribute(VERIFY_CODE_ATT);
+		ErrorParamOut resultMsg = new ErrorParamOut();
+		if (!registerValidator.CheckRegister(user.getUsername(), 
+				user.getPassword(), 
+				user.getConfirmPassword(), 
+				user.getEmail(), 
+				user.getMobilephone(),
+				codeAttri,
+				authCode, resultMsg))
+		{
+			System.out.println(resultMsg.getError());
+			redirectAttributes.addFlashAttribute("erroCode", resultMsg.getError());
 			return errorRedirectUrl;
 		}
 
-		try {
-			if (!mUserService.insertUser(user)) {
+		try 
+		{
+			if (!mUserService.insertUser(user)) 
+			{
 				redirectAttributes.addFlashAttribute("erroCode", "用户已存在");
 				return errorRedirectUrl;
-			} else if (getLoginFilter().registToLoginFilter(request, response))
+			} 
+			else if (getLoginFilter().registToLoginFilter(request, response))
+			{
 				return successRedirectUrl;
+			}
 
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -268,7 +281,7 @@ public class LoginController {
 		try 
 		{
 			mUserService.sendVerificationCode(code, emailAddress);
-			request.getSession().setAttribute("code", code);
+			request.getSession().setAttribute(VERIFY_CODE_ATT, code);
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -291,21 +304,21 @@ public class LoginController {
 		}
 		int code = BaseUtil.random();
 		logger.info("打印验证码：" + code);
-		request.getSession().setAttribute("code", code);
-		// 接口切换 SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
+		request.getSession().setAttribute(VERIFY_CODE_ATT, code);
+		/*// 接口切换 SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
 		Sms sms = new SmsYuntongxunImpl();
 		// Sms sms = new SmsWeimiImpl();
 		Map<String, Object> map;
 		try {
-			// map = sms.excute(code, mobilephone, 0);
-			// if (map.get("status").equals("success")) {
-			// return "success";
-			// }
+			map = sms.excute(code, mobilephone, 0);
+			if (map.get("status").equals("success")) {
+				return "success";
+			}
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return "error";
+		}*/
+		return "success";
 	}
 
 }
