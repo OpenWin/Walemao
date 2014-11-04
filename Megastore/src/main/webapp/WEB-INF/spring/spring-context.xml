@@ -75,7 +75,7 @@
 				<entry value-ref="dataSourceW" key="dataSourceW"></entry>
 			</map>
 		</property>
-		<property name="defaultTargetDataSource" ref="dataSourceR">
+		<property name="defaultTargetDataSource" ref="dataSourceW">
 		</property>
 	</bean>
 
