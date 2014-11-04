@@ -50,6 +50,13 @@ public class LoginController {
 	private Logger logger = LoggerFactory.getLogger(LoginController.class);
 	
 	private final static String VERIFY_CODE_ATT = "VERIFY_CODE_ATT";
+	private final static String USERNAME_EXIST = "用户已存在";
+	private final static String REGISTER_FAILED = "注册失败";
+	private final static String REGISTER_SUCCESSED = "注册成功";
+	private final static String EMAIL_EXIST = "邮箱已被注册过了，请更换其他邮箱！";
+	private final static String PHONE_EXIST = "手机已被注册过了，请更换其他手机！";
+	private final static String SEND_VERIFY_CODE = "已发送验证码";
+	private final static String INTERNAL_ERROR = "系统内部错误";
 
 	@Autowired
 	private LoginService mUserService;
@@ -167,20 +174,13 @@ public class LoginController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String processRegistration(
 			@RequestParam(required = false) String authCode,
-			@Validated @ModelAttribute("user") User user,
+			@ModelAttribute("user") User user,
 			HttpServletRequest request, HttpServletResponse response,
-			BindingResult result, RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes) {
 
 		String errorRedirectUrl = "redirect:/register";
 		String successRedirectUrl = "redirect:/index";
-
-		if (result.hasErrors()) {
-			// return result.getFieldError().toString();
-			redirectAttributes.addFlashAttribute("result",
-					result.getAllErrors());
-			return errorRedirectUrl;
-		}
-		// 验证短信或邮箱验证码
+		
 		Object codeAttri = request.getSession().getAttribute(VERIFY_CODE_ATT);
 		ErrorParamOut resultMsg = new ErrorParamOut();
 		if (!registerValidator.CheckRegister(user.getUsername(), 
@@ -200,7 +200,7 @@ public class LoginController {
 		{
 			if (!mUserService.insertUser(user)) 
 			{
-				redirectAttributes.addFlashAttribute("erroCode", "用户已存在");
+				redirectAttributes.addFlashAttribute("erroCode", USERNAME_EXIST);
 				return errorRedirectUrl;
 			} 
 			else if (getLoginFilter().registToLoginFilter(request, response))
@@ -215,7 +215,7 @@ public class LoginController {
 			e.printStackTrace();
 		}
 
-		redirectAttributes.addFlashAttribute("erroCode", "注册失败！");
+		redirectAttributes.addFlashAttribute("erroCode", REGISTER_FAILED);
 		return errorRedirectUrl;
 	}
 
@@ -235,9 +235,9 @@ public class LoginController {
 		}
 		
 		if (mUserService.getUser(username) == null) {
-			return "success";
+			return REGISTER_SUCCESSED;
 		}
-		return "error";
+		return USERNAME_EXIST;
 	}
 
 	/**
@@ -256,9 +256,9 @@ public class LoginController {
 		}
 		
 		if (mUserService.getMobilephoneExist(mobilephone)) {
-			return "success";
+			return REGISTER_SUCCESSED;
 		}
-		return "error";
+		return PHONE_EXIST;
 	}
 
 	/**
@@ -276,9 +276,9 @@ public class LoginController {
 			return errorOut.getError();
 		}
 		if (mUserService.getEmailExist(email)) {
-			return "success";
+			return REGISTER_SUCCESSED;
 		}
-		return "error";
+		return EMAIL_EXIST;
 	}
 
 	/**
@@ -300,7 +300,7 @@ public class LoginController {
 		}
 		
 		if (mUserService.getEmailExist(emailAddress)) {
-			return "邮箱已被注册过了，请更换其他邮箱！".toString();
+			return EMAIL_EXIST;
 		}
 		int code = BaseUtil.random();
 		
@@ -308,11 +308,11 @@ public class LoginController {
 		{
 			mUserService.sendVerificationCode(code, emailAddress);
 			request.getSession().setAttribute(VERIFY_CODE_ATT, code);
-			return "success";
+			return SEND_VERIFY_CODE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "error";
+		return INTERNAL_ERROR;
 	}
 
 	/**
@@ -333,7 +333,7 @@ public class LoginController {
 		}
 		
 		if (mUserService.getMobilephoneExist(mobilephone)) {
-			return "手机已被注册过了，请更换其他手机！";
+			return PHONE_EXIST;
 		}
 		int code = BaseUtil.random();
 		logger.info("打印验证码：" + code);
@@ -351,7 +351,7 @@ public class LoginController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		return "success";
+		return SEND_VERIFY_CODE;
 	}
 
 }
