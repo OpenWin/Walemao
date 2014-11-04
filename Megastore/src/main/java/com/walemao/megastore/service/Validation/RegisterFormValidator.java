@@ -1,6 +1,6 @@
 package com.walemao.megastore.service.Validation;
 
-import com.walemao.megastore.util.ErrorParamOut;
+import com.walemao.megastore.domain.ErrorParamOut;
 
 public interface RegisterFormValidator {
 

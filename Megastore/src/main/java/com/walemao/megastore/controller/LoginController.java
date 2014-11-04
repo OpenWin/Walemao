@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ytx.org.apache.http.HttpResponse;
 
+import com.walemao.megastore.domain.ErrorParamOut;
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.security.filter.LoginAuthenticationFilter;
 import com.walemao.megastore.security.provider.RandomValidateCode;
@@ -43,7 +44,6 @@ import com.walemao.megastore.service.Validation.RegisterFormValidator;
 import com.walemao.megastore.service.Validation.RegisterFormValidatorImpl;
 import com.walemao.megastore.service.jms.JmsPushTest;
 import com.walemao.megastore.util.BaseUtil;
-import com.walemao.megastore.util.ErrorParamOut;
 
 @Controller
 public class LoginController {
