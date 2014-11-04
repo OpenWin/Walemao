@@ -18,16 +18,16 @@ public class JmsPushTest {
 	@Autowired
 	private JmsTemplate jmsTemplate;
 	
-	@Autowired
-	@Qualifier("responseQueue")
-	private Destination responseDestinatin;
+//	@Autowired
+//	@Qualifier("queueDestination")
+//	private Destination responseDestinatin;
 	
 	public void pushMessage(Destination destination, final String message){
 		System.out.println("---------------生产者发了一个消息：" + message);  
         jmsTemplate.send(destination, new MessageCreator() {  
             public Message createMessage(Session session) throws JMSException {  
                 TextMessage textMsg = session.createTextMessage(message);  
-                textMsg.setJMSReplyTo(responseDestinatin);
+                //textMsg.setJMSReplyTo(responseDestinatin);
                 return textMsg;
             }  
         }); 
