@@ -226,7 +226,14 @@ public class LoginController {
 	 * @return error页面返回连接
 	 */
 	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
-	public @ResponseBody String validateUser(String username) {
+	public @ResponseBody String validateUser(String username)
+	{
+		ErrorParamOut errorOut = new ErrorParamOut();
+		if (!registerValidator.CheckUserName(username, errorOut))
+		{
+			return errorOut.getError();
+		}
+		
 		if (mUserService.getUser(username) == null) {
 			return "success";
 		}
@@ -240,7 +247,14 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "validateuser/isPinMobilePhone", method = RequestMethod.GET)
-	public @ResponseBody String validateMobilephone(String mobilephone) {
+	public @ResponseBody String validateMobilephone(String mobilephone) 
+	{
+		ErrorParamOut errorOut = new ErrorParamOut();
+		if (!registerValidator.CheckPhone(mobilephone, errorOut))
+		{
+			return errorOut.getError();
+		}
+		
 		if (mUserService.getMobilephoneExist(mobilephone)) {
 			return "success";
 		}
@@ -254,7 +268,13 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "validateuser/isPinEmail", method = RequestMethod.GET)
-	public @ResponseBody String validateEmail(String email) {
+	public @ResponseBody String validateEmail(String email)
+	{
+		ErrorParamOut errorOut = new ErrorParamOut();
+		if (!registerValidator.CheckEmail(email, errorOut))
+		{
+			return errorOut.getError();
+		}
 		if (mUserService.getEmailExist(email)) {
 			return "success";
 		}
@@ -269,10 +289,16 @@ public class LoginController {
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
-	public @ResponseBody String sendVericationCode(String emailAddress,HttpServletRequest request,
+	public @ResponseBody String sendVericationCode(String emailAddress, HttpServletRequest request,
 			HttpServletResponse response) throws UnsupportedEncodingException {
 		response.setCharacterEncoding("utf-8");
 
+		ErrorParamOut errorOut = new ErrorParamOut();
+		if (!registerValidator.CheckEmail(emailAddress, errorOut))
+		{
+			return errorOut.getError();
+		}
+		
 		if (mUserService.getEmailExist(emailAddress)) {
 			return "邮箱已被注册过了，请更换其他邮箱！".toString();
 		}
@@ -299,6 +325,13 @@ public class LoginController {
 	@RequestMapping(value = "sendMpCode", method = RequestMethod.POST)
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
+		
+		ErrorParamOut errorOut = new ErrorParamOut();
+		if (!registerValidator.CheckPhone(mobilephone, errorOut))
+		{
+			return errorOut.getError();
+		}
+		
 		if (mUserService.getMobilephoneExist(mobilephone)) {
 			return "手机已被注册过了，请更换其他手机！";
 		}
