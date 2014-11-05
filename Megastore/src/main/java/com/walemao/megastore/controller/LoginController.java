@@ -117,7 +117,7 @@ public class LoginController {
 			HttpServletRequest request) {
 		LoginAttributeJudge.RedirectSessionAttribute(request);
 
-		//jmsPushTest.pushMessage(destination, "Hello World!");
+		jmsPushTest.pushMessage(destination, "你好，西瓜黎!");
 
 		request.setAttribute(USERNAME_ATT, pltCookie);
 		return "login";
