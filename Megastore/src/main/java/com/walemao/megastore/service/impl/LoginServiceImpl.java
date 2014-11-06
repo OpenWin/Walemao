@@ -1,5 +1,7 @@
 package com.walemao.megastore.service.impl;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +10,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import com.walemao.megastore.domain.JMessage;
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.domain.UserAuthority;
 import com.walemao.megastore.domain.UserBase;
 import com.walemao.megastore.domain.UserDetail;
+import com.walemao.megastore.message.MessageManager;
+import com.walemao.megastore.message.define.MessageType;
 import com.walemao.megastore.repository.UserAuthorityDao;
 import com.walemao.megastore.repository.UserBaseDao;
 import com.walemao.megastore.repository.UserDao;
@@ -46,6 +51,9 @@ public class LoginServiceImpl implements LoginService {
 
 	@Autowired
 	private MailSender mailSender;
+	
+	@Autowired
+	private MessageManager messageManager;
 
 	@Override
 	public boolean insertUser(User user) {
@@ -79,6 +87,12 @@ public class LoginServiceImpl implements LoginService {
 		author.setAuthority("ROLE_USER");
 		userAuthorityDao.insert(author);
 
+		JMessage jMessage = new JMessage();
+		jMessage.setContent("new_user");
+		jMessage.setType(MessageType.TYPE1.getTypeValue());
+		
+		messageManager.addMessage(jMessage);
+		messageManager.sendMessage(jMessage);
 		return true;
 	}
 

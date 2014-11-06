@@ -67,15 +67,6 @@ public class LoginController {
 	@Autowired
 	private RegisterFormValidatorImpl usernameValidator;
 
-	@Autowired
-	private JmsPushTest jmsPushTest;
-	@Autowired
-	@Qualifier("queueDestination")
-	private Destination destination;
-
-	@Autowired
-	@Qualifier("topicDestination")
-	private Destination topicDestination;
 	
 	@Autowired
 	private RegisterFormValidator registerValidator;
@@ -116,8 +107,6 @@ public class LoginController {
 			@CookieValue(value = "_plt", required = false) String pltCookie,
 			HttpServletRequest request) {
 		LoginAttributeJudge.RedirectSessionAttribute(request);
-
-		jmsPushTest.pushMessage(destination, "你好，西瓜黎!");
 
 		request.setAttribute(USERNAME_ATT, pltCookie);
 		return "login";
