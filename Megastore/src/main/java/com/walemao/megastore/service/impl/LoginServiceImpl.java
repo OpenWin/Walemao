@@ -1,10 +1,12 @@
 package com.walemao.megastore.service.impl;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.annotation.Secured;
@@ -90,7 +92,9 @@ public class LoginServiceImpl implements LoginService {
 		JMessage jMessage = new JMessage();
 		jMessage.setContent("new_user");
 		jMessage.setType(MessageType.TYPE1.getTypeValue());
-		
+		jMessage.setClusterid("1");
+		jMessage.setTarget("queueDistination");
+		jMessage.setNext_sendtime(new Timestamp(System.currentTimeMillis()));
 		messageManager.addMessage(jMessage);
 		messageManager.sendMessage(jMessage);
 		return true;
