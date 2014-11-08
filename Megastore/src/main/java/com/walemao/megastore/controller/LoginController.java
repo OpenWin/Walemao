@@ -40,9 +40,9 @@ import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.security.util.XmlBeanSpringContextHelper;
 import com.walemao.megastore.service.LoginService;
-import com.walemao.megastore.service.Validation.RegisterFormValidator;
-import com.walemao.megastore.service.Validation.RegisterFormValidatorImpl;
 import com.walemao.megastore.service.jms.JmsPushTest;
+import com.walemao.megastore.service.validation.RegisterFormValidator;
+import com.walemao.megastore.service.validation.RegisterFormValidatorImpl;
 import com.walemao.megastore.util.BaseUtil;
 
 @Controller

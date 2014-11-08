@@ -1,4 +1,4 @@
-package com.walemao.megastore.service.Validation;
+package com.walemao.megastore.service.validation;
 
 import com.walemao.megastore.domain.ErrorParamOut;
 
