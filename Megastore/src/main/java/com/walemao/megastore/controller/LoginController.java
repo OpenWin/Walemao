@@ -317,16 +317,22 @@ public class LoginController {
 	@RequestMapping(value = "sendMpCode", method = RequestMethod.POST)
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
-		
+		System.out.println("start function sendMobilephoneVericationCode at " + BaseUtil.GetCurrentTime());
 		ErrorParamOut errorOut = new ErrorParamOut();
+		
+		System.out.println("start registerValidator.CheckPhone" + BaseUtil.GetCurrentTime());
 		if (!registerValidator.CheckPhone(mobilephone, errorOut))
 		{
 			return errorOut.getError();
 		}
+		System.out.println("end registerValidator.CheckPhone" + BaseUtil.GetCurrentTime());
 		
+		System.out.println("start mUserService.getMobilephoneExist" + BaseUtil.GetCurrentTime());
 		if (mUserService.getMobilephoneExist(mobilephone)) {
 			return PHONE_EXIST;
 		}
+		System.out.println("end mUserService.getMobilephoneExist" + BaseUtil.GetCurrentTime());
+		
 		int code = BaseUtil.random();
 		logger.info("打印验证码：" + code);
 		request.getSession().setAttribute(VERIFY_CODE_ATT, code);
@@ -343,6 +349,7 @@ public class LoginController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
+		System.out.println("End function sendMobilephoneVericationCode at " + BaseUtil.GetCurrentTime());
 		return SEND_VERIFY_CODE;
 	}
 
