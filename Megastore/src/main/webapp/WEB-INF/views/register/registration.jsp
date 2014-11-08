@@ -124,7 +124,7 @@ body {
 			mobilephone : $('#phone').val()
 		}, function(msg) {
 			alert(jQuery.trim(msg));
-			if (msg == 'success') {
+			if (msg == '已发送验证码') {
 				RemainTime();
 			}
 		});
@@ -135,6 +135,9 @@ body {
 			emailAddress : $('#email').val()
 		}, function(msg) {
 			alert(msg);
+			if (msg == '已发送验证码') {
+				RemainTime();
+			}
 		});
 	};
 	
