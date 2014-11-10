@@ -1,11 +1,7 @@
 package com.walemao.megastore.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.jms.Destination;
-import javax.jms.TextMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,16 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,8 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ytx.org.apache.http.HttpResponse;
-
 import com.walemao.megastore.domain.ErrorParamOut;
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.security.filter.LoginAuthenticationFilter;
@@ -40,15 +29,15 @@ import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.security.util.XmlBeanSpringContextHelper;
 import com.walemao.megastore.service.LoginService;
-import com.walemao.megastore.service.jms.JmsPushTest;
 import com.walemao.megastore.service.validation.RegisterFormValidator;
 import com.walemao.megastore.service.validation.RegisterFormValidatorImpl;
 import com.walemao.megastore.util.BaseUtil;
+import com.walemao.megastore.util.DateUtil;
 
 @Controller
 public class LoginController {
 	private Logger logger = LoggerFactory.getLogger(LoginController.class);
-	
+
 	private final static String VERIFY_CODE_ATT = "VERIFY_CODE_ATT";
 	private final static String USERNAME_ATT = "username";
 	private final static String ERROR_CODE_ATT = "erroCode";
@@ -60,14 +49,13 @@ public class LoginController {
 	private final static String PHONE_EXIST = "手机已被注册过了，请更换其他手机！";
 	private final static String SEND_VERIFY_CODE = "已发送验证码";
 	private final static String INTERNAL_ERROR = "系统内部错误";
-	
+
 	@Autowired
 	private LoginService mUserService;
 
 	@Autowired
 	private RegisterFormValidatorImpl usernameValidator;
 
-	
 	@Autowired
 	private RegisterFormValidator registerValidator;
 
@@ -152,7 +140,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String getRegistrationPage(@ModelAttribute("user") User user) {
-		//jmsPushTest.pushMessage(topicDestination, "Topic message...");
+		// jmsPushTest.pushMessage(topicDestination, "Topic message...");
 		return "/register/registration";
 	}
 
@@ -166,43 +154,33 @@ public class LoginController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String processRegistration(
 			@RequestParam(required = false) String authCode,
-			@ModelAttribute("user") User user,
-			HttpServletRequest request, HttpServletResponse response,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute("user") User user, HttpServletRequest request,
+			HttpServletResponse response, RedirectAttributes redirectAttributes) {
 
 		String errorRedirectUrl = "redirect:/register";
 		String successRedirectUrl = "redirect:/index";
-		
+
 		Object codeAttri = request.getSession().getAttribute(VERIFY_CODE_ATT);
 		ErrorParamOut resultMsg = new ErrorParamOut();
-		if (!registerValidator.CheckRegister(user.getUsername(), 
-				user.getPassword(), 
-				user.getConfirmPassword(), 
-				user.getEmail(), 
-				user.getMobilephone(),
-				codeAttri,
-				authCode, resultMsg))
-		{
+		if (!registerValidator.CheckRegister(user.getUsername(),
+				user.getPassword(), user.getConfirmPassword(), user.getEmail(),
+				user.getMobilephone(), codeAttri, authCode, resultMsg)) {
 			System.out.println(resultMsg.getError());
-			redirectAttributes.addFlashAttribute(ERROR_CODE_ATT, resultMsg.getError());
+			redirectAttributes.addFlashAttribute(ERROR_CODE_ATT,
+					resultMsg.getError());
 			return errorRedirectUrl;
 		}
 
-		try 
-		{
-			if (!mUserService.insertUser(user)) 
-			{
-				redirectAttributes.addFlashAttribute(ERROR_CODE_ATT, USERNAME_EXIST);
+		try {
+			if (!mUserService.insertUser(user)) {
+				redirectAttributes.addFlashAttribute(ERROR_CODE_ATT,
+						USERNAME_EXIST);
 				return errorRedirectUrl;
-			} 
-			else if (getLoginFilter().registToLoginFilter(request, response))
-			{
+			} else if (getLoginFilter().registToLoginFilter(request, response)) {
 				return successRedirectUrl;
 			}
 
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -218,14 +196,12 @@ public class LoginController {
 	 * @return error页面返回连接
 	 */
 	@RequestMapping(value = "validateuser/isPinEngaged", method = RequestMethod.GET)
-	public @ResponseBody String validateUser(String username)
-	{
+	public @ResponseBody String validateUser(String username) {
 		ErrorParamOut errorOut = new ErrorParamOut();
-		if (!registerValidator.CheckUserName(username, errorOut))
-		{
+		if (!registerValidator.CheckUserName(username, errorOut)) {
 			return errorOut.getError();
 		}
-		
+
 		if (mUserService.getUser(username) == null) {
 			return REGISTER_SUCCESSED;
 		}
@@ -239,14 +215,12 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "validateuser/isPinMobilePhone", method = RequestMethod.GET)
-	public @ResponseBody String validateMobilephone(String mobilephone) 
-	{
+	public @ResponseBody String validateMobilephone(String mobilephone) {
 		ErrorParamOut errorOut = new ErrorParamOut();
-		if (!registerValidator.CheckPhone(mobilephone, errorOut))
-		{
+		if (!registerValidator.CheckPhone(mobilephone, errorOut)) {
 			return errorOut.getError();
 		}
-		
+
 		if (mUserService.getMobilephoneExist(mobilephone)) {
 			return REGISTER_SUCCESSED;
 		}
@@ -260,11 +234,9 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "validateuser/isPinEmail", method = RequestMethod.GET)
-	public @ResponseBody String validateEmail(String email)
-	{
+	public @ResponseBody String validateEmail(String email) {
 		ErrorParamOut errorOut = new ErrorParamOut();
-		if (!registerValidator.CheckEmail(email, errorOut))
-		{
+		if (!registerValidator.CheckEmail(email, errorOut)) {
 			return errorOut.getError();
 		}
 		if (mUserService.getEmailExist(email)) {
@@ -281,23 +253,22 @@ public class LoginController {
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "sendEmCode", method = RequestMethod.POST)
-	public @ResponseBody String sendVericationCode(String emailAddress, HttpServletRequest request,
-			HttpServletResponse response) throws UnsupportedEncodingException {
+	public @ResponseBody String sendVericationCode(String emailAddress,
+			HttpServletRequest request, HttpServletResponse response)
+			throws UnsupportedEncodingException {
 		response.setCharacterEncoding("utf-8");
 
 		ErrorParamOut errorOut = new ErrorParamOut();
-		if (!registerValidator.CheckEmail(emailAddress, errorOut))
-		{
+		if (!registerValidator.CheckEmail(emailAddress, errorOut)) {
 			return errorOut.getError();
 		}
-		
+
 		if (mUserService.getEmailExist(emailAddress)) {
 			return EMAIL_EXIST;
 		}
 		int code = BaseUtil.random();
-		
-		try 
-		{
+
+		try {
 			mUserService.sendVerificationCode(code, emailAddress);
 			request.getSession().setAttribute(VERIFY_CODE_ATT, code);
 			return SEND_VERIFY_CODE;
@@ -317,39 +288,38 @@ public class LoginController {
 	@RequestMapping(value = "sendMpCode", method = RequestMethod.POST)
 	public @ResponseBody String sendMobilephoneVericationCode(
 			String mobilephone, HttpServletRequest request) {
-		System.out.println("start function sendMobilephoneVericationCode at " + BaseUtil.GetCurrentTime());
+		System.out.println("start function sendMobilephoneVericationCode at "
+				+ DateUtil.formatToH());
 		ErrorParamOut errorOut = new ErrorParamOut();
-		
-		System.out.println("start registerValidator.CheckPhone" + BaseUtil.GetCurrentTime());
-		if (!registerValidator.CheckPhone(mobilephone, errorOut))
-		{
+
+		System.out.println("start registerValidator.CheckPhone"
+				+ DateUtil.formatToH());
+		if (!registerValidator.CheckPhone(mobilephone, errorOut)) {
 			return errorOut.getError();
 		}
-		System.out.println("end registerValidator.CheckPhone" + BaseUtil.GetCurrentTime());
-		
-		System.out.println("start mUserService.getMobilephoneExist" + BaseUtil.GetCurrentTime());
+		System.out.println("end registerValidator.CheckPhone"
+				+ DateUtil.formatToH());
+
+		System.out.println("start mUserService.getMobilephoneExist"
+				+ DateUtil.formatToH());
 		if (mUserService.getMobilephoneExist(mobilephone)) {
 			return PHONE_EXIST;
 		}
-		System.out.println("end mUserService.getMobilephoneExist" + BaseUtil.GetCurrentTime());
-		
+		System.out.println("end mUserService.getMobilephoneExist"
+				+ DateUtil.formatToH());
+
 		int code = BaseUtil.random();
 		logger.info("打印验证码：" + code);
 		request.getSession().setAttribute(VERIFY_CODE_ATT, code);
-		/*// 接口切换 SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵
-		Sms sms = new SmsYuntongxunImpl();
-		// Sms sms = new SmsWeimiImpl();
-		Map<String, Object> map;
-		try {
-			map = sms.excute(code, mobilephone, 0);
-			if (map.get("status").equals("success")) {
-				return "success";
-			}
-			return "success";
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-		System.out.println("End function sendMobilephoneVericationCode at " + BaseUtil.GetCurrentTime());
+		/*
+		 * // 接口切换 SmsIhuyiImpl 入门高，SmsWeimiImpl低 偏贵 Sms sms = new
+		 * SmsYuntongxunImpl(); // Sms sms = new SmsWeimiImpl(); Map<String,
+		 * Object> map; try { map = sms.excute(code, mobilephone, 0); if
+		 * (map.get("status").equals("success")) { return "success"; } return
+		 * "success"; } catch (Exception e) { e.printStackTrace(); }
+		 */
+		System.out.println("End function sendMobilephoneVericationCode at "
+				+ DateUtil.formatToH());
 		return SEND_VERIFY_CODE;
 	}
 
