@@ -30,7 +30,6 @@ import com.walemao.megastore.security.util.LoginAttributeJudge;
 import com.walemao.megastore.security.util.XmlBeanSpringContextHelper;
 import com.walemao.megastore.service.LoginService;
 import com.walemao.megastore.service.validation.RegisterFormValidator;
-import com.walemao.megastore.service.validation.RegisterFormValidatorImpl;
 import com.walemao.megastore.util.BaseUtil;
 import com.walemao.megastore.util.DateUtil;
 
@@ -52,9 +51,6 @@ public class LoginController {
 
 	@Autowired
 	private LoginService mUserService;
-
-	@Autowired
-	private RegisterFormValidatorImpl usernameValidator;
 
 	@Autowired
 	private RegisterFormValidator registerValidator;
