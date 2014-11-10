@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.walemao.megastore.domain.User;
 import com.walemao.megastore.security.provider.RandomValidateCode;
 import com.walemao.megastore.service.LoginService;
-import com.walemao.megastore.util.BaseUtil;
+import com.walemao.megastore.util.ValidateUtil;
 import com.walemao.megastore.util.StringMD5;
 
 @Controller
@@ -112,11 +112,11 @@ public class SafetyController {
 				return "redirect:safe/findPwd";
 			} else {
 				String username = name;
-				if (BaseUtil.isEmail(name)) {
+				if (ValidateUtil.isEmail(name)) {
 					// 邮箱
 					username = mUserService.getUsername(name, 1);
 
-				} else if (BaseUtil.isMobile(name)) {
+				} else if (ValidateUtil.isMobile(name)) {
 					// 手机号码
 					username = mUserService.getUsername(name, 0);
 					;
@@ -129,14 +129,14 @@ public class SafetyController {
 				}
 				if (user.getEmail() != null && !user.getEmail().equals("")) {
 					request.setAttribute("encryptemail",
-							BaseUtil.encrptEmail(user.getEmail()));
+							ValidateUtil.encrptEmail(user.getEmail()));
 					request.setAttribute("emailMD5",
 							StringMD5.longEncode(user.getEmail()));
 				}
 				if (user.getMobilephone() != null
 						&& !user.getMobilephone().equals("")) {
 					request.setAttribute("encryptmobilephone",
-							BaseUtil.encrptMobilephone(user.getMobilephone()));
+							ValidateUtil.encrptMobilephone(user.getMobilephone()));
 					request.setAttribute("mobilephoneMD5",
 							StringMD5.longEncode(user.getMobilephone()));
 				}
