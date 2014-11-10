@@ -25,45 +25,32 @@
 	<context:property-placeholder location="WEB-INF/spring/application.properties" />
 
 	<!-- 配置Mysql数据源 -->
-	<bean id="dataSourceRead" class="com.jolbox.bonecp.BoneCPDataSource"
+	<bean id="dataSourceRead" class="com.atomikos.jdbc.AtomikosDataSourceBean"
 		destroy-method="close">
-		<property name="driverClass" value="${jdbc.driver}" />
-		<property name="jdbcUrl" value="${jdbc.jdbcUrlRead}" />
-		<property name="username" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
-		<property name="maxConnectionsPerPartition" value="${jdbc.maxConnectionsPerPartition}" />
-		<property name="minConnectionsPerPartition" value="${jdbc.minConnectionsPerPartition}" />
-		<property name="partitionCount" value="${jdbc.partitionCount}" />
-		<property name="acquireIncrement" value="5" />
-		<property name="statementsCacheSize" value="100" />
-		<property name="releaseHelperThreads" value="3" />
-		<property name="connectionTimeoutInMs" value="5000" />
-		<property name="closeConnectionWatchTimeoutInMs" value="1000" />
+		<property name="uniqueResourceName" value="mysql_read" />
+		<property name="xaDataSourceClassName" value="${jdbc.driver}" />
+		<property name="xaProperties">
+			<props>
+				<prop key="user">${jdbc.username}</prop>
+				<prop key="password">${jdbc.password}</prop>
+				<prop key="URL">${jdbc.jdbcUrlRead}</prop>
+			</props>
+		</property>
+		<property name="poolSize" value="${jdbc.pool}" />
 	</bean>
 
-	<bean id="dataSourceWrite" class="com.jolbox.bonecp.BoneCPDataSource"
+	<bean id="dataSourceWrite" class="com.atomikos.jdbc.AtomikosDataSourceBean"
 		destroy-method="close">
-		<property name="driverClass" value="${jdbc.driver}" />
-		<property name="jdbcUrl" value="${jdbc.jdbcUrlWrite}" />
-		<property name="username" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
-		<property name="maxConnectionsPerPartition" value="${jdbc.maxConnectionsPerPartition}" />
-		<property name="minConnectionsPerPartition" value="${jdbc.minConnectionsPerPartition}" />
-		<property name="partitionCount" value="${jdbc.partitionCount}" />
-		<property name="acquireIncrement" value="5" />
-		<property name="statementsCacheSize" value="100" />
-		<property name="releaseHelperThreads" value="3" />
-		<property name="connectionTimeoutInMs" value="5000" />
-		<property name="closeConnectionWatchTimeoutInMs" value="1000" />
-	</bean>
-
-	<!-- log4jdbc代理数据源 -->
-	<bean id="dataSourceR" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-		<constructor-arg ref="dataSourceRead" />
-	</bean>
-
-	<bean id="dataSourceW" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-		<constructor-arg ref="dataSourceWrite" />
+		<property name="uniqueResourceName" value="mysql_write" />  
+		<property name="xaDataSourceClassName" value="${jdbc.driver}" />
+		<property name="xaProperties">
+			<props>
+				<prop key="user">${jdbc.username}</prop>
+				<prop key="password">${jdbc.password}</prop>
+				<prop key="URL">${jdbc.jdbcUrlWrite}</prop>
+			</props>
+		</property>
+		<property name="poolSize" value="${jdbc.pool}" />
 	</bean>
 
 	<bean id="dynamicDataSource"
@@ -71,11 +58,11 @@
 		<!-- 通过key-value的形式来关联数据源 -->
 		<property name="targetDataSources">
 			<map key-type="java.lang.String">
-				<entry value-ref="dataSourceR" key="dataSourceR"></entry>
-				<entry value-ref="dataSourceW" key="dataSourceW"></entry>
+				<entry value-ref="dataSourceRead" key="dataSourceRead"></entry>
+				<entry value-ref="dataSourceWrite" key="dataSourceWrite"></entry>
 			</map>
 		</property>
-		<property name="defaultTargetDataSource" ref="dataSourceW">
+		<property name="defaultTargetDataSource" ref="dataSourceWrite">
 		</property>
 	</bean>
 
@@ -99,31 +86,42 @@
 		</property>
 	</bean>
 
-    <context:component-scan base-package="com.walemao.megastore">
-       <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
-    
-    <!-- AOP Aspect -->
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	<bean id="chooserDataSourceAspect" class="com.walemao.megastore.repository.datasource.ChooseDataSourceAspect" />
+	<context:component-scan base-package="com.walemao.megastore">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
 
-    <!-- 定义事务管理 -->
+	<!-- AOP Aspect -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<bean id="chooserDataSourceAspect"
+		class="com.walemao.megastore.repository.datasource.ChooseDataSourceAspect" />
+
+	<!-- 定义事务管理 -->
+	<bean id="atomikosTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager"
+		init-method="init" destroy-method="close">
+		<property name="forceShutdown" value="true" />
+	</bean>
+	<bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp">
+		<property name="transactionTimeout" value="300" />
+	</bean>
+
+	<!-- JTA事务管理器 -->
 	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSourceW" />
-	</bean>	
-	<!-- 定义事务传播属性 -->
-	<tx:annotation-driven transaction-manager="txManager" />
-	<!-- 事务建议 -->
+		class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="transactionManager" ref="atomikosTransactionManager" />
+		<property name="userTransaction" ref="atomikosUserTransaction" />
+	</bean>
+	
+	<!-- 事务通知 -->
 	<tx:advice id="txAdvice" transaction-manager="txManager">
 		<!-- 事务语义 -->
 		<tx:attributes>
-			<tx:method name="insert*" propagation="REQUIRED"/>
-			<tx:method name="update*" propagation="REQUIRED"/>
-			<tx:method name="delete*" propagation="REQUIRED"/>
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-    <!-- AOP TX -->
+	<!-- AOP TX -->
 	<aop:config>
 		<aop:pointcut id="transactionPointCut"
 			expression="execution(* com.walemao.megastore.service.impl.*.*(..))" />

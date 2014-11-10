@@ -59,11 +59,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public boolean insertUser(User user) {
-		logger.info("开始注册~~~~~~~");
-		if (userAttemptsDao.CheckUsername(user.getUsername())) {
-			return false;
-		}
-
+	
 		String salt = provider.createSaltValue();
 		user.setPassword(provider.encodeRegisterPassword(user.getUsername(),
 				user.getPassword(), salt));
