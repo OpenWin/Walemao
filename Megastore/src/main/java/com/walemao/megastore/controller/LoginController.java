@@ -263,7 +263,8 @@ public class LoginController {
 		int code = BaseUtil.random();
 
 		try {
-			mUserService.sendVerificationCode(code, emailAddress);
+			logger.info("打印验证码：" + code);
+			mUserService.sendVerificationCode(request, code, emailAddress);
 			request.getSession().setAttribute(VERIFY_CODE_ATT, code);
 			return SEND_VERIFY_CODE;
 		} catch (Exception e) {

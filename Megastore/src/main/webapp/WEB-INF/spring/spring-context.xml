@@ -23,7 +23,6 @@
 
 	<!-- 项目配置文件 -->
 	<context:property-placeholder location="WEB-INF/spring/application.properties" />
-
 	<!-- 配置Mysql数据源 -->
 	<bean id="dataSourceRead" class="com.atomikos.jdbc.AtomikosDataSourceBean"
 		destroy-method="close">
@@ -74,14 +73,16 @@
 
 	<!-- email -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="smtp.126.com"></property>
-		<property name="port" value="25"></property>
-		<property name="username" value="walemao@126.com"></property>
-		<property name="password" value="walemao1"></property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="host" value="${email.host}"></property>
+		<property name="port" value="${email.port}"></property>
+		<property name="username" value="${email.username}"></property>
+		<property name="password" value="${email.password}"></property>
 		<property name="javaMailProperties">
 			<props>
-				<prop key="mail.smtp.auth">true</prop>
-				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.auth">${email.auth}</prop>
+				<prop key="mail.smtp.starttls.enable">${email.enable}</prop>
+				<prop key="mail.smtp.timeout">${email.timeout}</prop>
 			</props>
 		</property>
 	</bean>

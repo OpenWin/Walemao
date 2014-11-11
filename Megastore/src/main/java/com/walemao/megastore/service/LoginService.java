@@ -1,5 +1,9 @@
 package com.walemao.megastore.service;
 
+import java.io.UnsupportedEncodingException;
+
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import com.walemao.megastore.domain.User;
 
 public interface LoginService {
@@ -24,7 +28,7 @@ public interface LoginService {
 	public boolean updatePassword(String username, String oldRawPassword,
 			String newRawPassword);
 
-	public void sendVerificationCode(int code, String emailAddress);
+	public void sendVerificationCode(HttpServletRequest request,int code, String emailAddress) throws MessagingException, UnsupportedEncodingException;
 
 	/**
 	 * 根据用户名获取用户信息

@@ -1,14 +1,26 @@
 package com.walemao.megastore.service.impl;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpRequest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +43,8 @@ import com.walemao.megastore.service.LoginService;
 public class LoginServiceImpl implements LoginService {
 	private Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
-	private static final String fromAddress = "walemao@126.com";
+	// private static final String fromAddress = "st3952@163.com";
+	private static final String fromAddress = "customer_service@walemao.com";
 
 	@Autowired
 	private UserDao userDao;
@@ -53,13 +66,13 @@ public class LoginServiceImpl implements LoginService {
 
 	@Autowired
 	private MailSender mailSender;
-	
+
 	@Autowired
 	private MessageManager messageManager;
 
 	@Override
 	public boolean insertUser(User user) {
-	
+
 		String salt = provider.createSaltValue();
 		user.setPassword(provider.encodeRegisterPassword(user.getUsername(),
 				user.getPassword(), salt));
@@ -129,20 +142,45 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public void sendVerificationCode(int code, String emailAddress) {
+	public void sendVerificationCode(HttpServletRequest request, int code,
+			String emailAddress) throws MessagingException,
+			UnsupportedEncodingException {
 		// TODO Auto-generated method stub
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom(fromAddress);
-		message.setText("" + code);
-		message.setTo(emailAddress);
-		message.setSubject("哇乐猫——帐号验证码");
-		mailSender.send(message);
+		JavaMailSenderImpl sender = (JavaMailSenderImpl) mailSender;
+		MimeMessage mailMessage = sender.createMimeMessage();
+		MimeMessageHelper messageHelper = null;
+		messageHelper = new MimeMessageHelper(mailMessage, true);
+		String nick = "";
+		nick = javax.mail.internet.MimeUtility.encodeText("哇乐猫walemao.com");
+		messageHelper.setFrom(new InternetAddress(nick + " <" + fromAddress
+				+ ">"));
+		messageHelper.setTo(emailAddress);
+		messageHelper.setSubject("哇乐猫——帐号验证码");
+		messageHelper.setText(
+				"<html><head></head><body><h1>hello!!spring image html mail</h1>"
+						+ "<a href=http://www.baidu.com>baidu</a>" + "<br/>"
+						+ code + "<br/><img src=cid:image/></body></html>",
+				true);
+		FileSystemResource img = new FileSystemResource(new File(request
+				.getSession().getServletContext()
+				.getRealPath("/resources/images/1.jpg")));
+
+		messageHelper.addInline("image", img);// 跟cid一致
+
+		sender.send(mailMessage);
+		System.out.println("邮件发送成功...");
+		/*
+		 * SimpleMailMessage message = new SimpleMailMessage();
+		 * message.setFrom(fromAddress); message.setText("" + code);
+		 * message.setTo(emailAddress); message.setSubject("哇乐猫——帐号验证码");
+		 * mailSender.send(message);
+		 */
 	}
 
 	@Override
 	public User getUser(String username) {
 		// TODO Auto-generated method stub
-		logger.info("sbbbbbbbbbbbbbbbbbbbb "+username);
+		logger.info("sbbbbbbbbbbbbbbbbbbbb " + username);
 		return userDao.getUser(username);
 	}
 
