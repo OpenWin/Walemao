@@ -3,10 +3,8 @@ package com.walemao.megastore.service.impl;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpRequest;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.annotation.Secured;
@@ -164,17 +159,9 @@ public class LoginServiceImpl implements LoginService {
 		FileSystemResource img = new FileSystemResource(new File(request
 				.getSession().getServletContext()
 				.getRealPath("/resources/images/1.jpg")));
-
 		messageHelper.addInline("image", img);// 跟cid一致
-
 		sender.send(mailMessage);
 		System.out.println("邮件发送成功...");
-		/*
-		 * SimpleMailMessage message = new SimpleMailMessage();
-		 * message.setFrom(fromAddress); message.setText("" + code);
-		 * message.setTo(emailAddress); message.setSubject("哇乐猫——帐号验证码");
-		 * mailSender.send(message);
-		 */
 	}
 
 	@Override
