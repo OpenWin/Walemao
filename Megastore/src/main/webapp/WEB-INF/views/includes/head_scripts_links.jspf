@@ -2,5 +2,6 @@
 <!-- default header name is X-CSRF-TOKEN -->
 <meta name="_csrf_header" content="${_csrf.headerName}"/>
 <link rel="stylesheet" href="<c:url value="/resources/css/bootstrap.min.css"/>" />
-<link rel="stylesheet" href="<c:url value="/resources/css/bootstrap-theme.min.css"/>" />
+<link rel="stylesheet" href="<c:url value="/resources/css/font-awesome.min.css"/>" />
 <link rel="stylesheet" href="<c:url value="/resources/css/megastore.base.css"/>" />
+<link rel="stylesheet" href="<c:url value="/resources/css/megastore.main.css"/>" />
